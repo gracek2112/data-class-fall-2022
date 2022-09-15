@@ -22,7 +22,7 @@ You should have installed tidyverse already. If not, then delete the hashtag in 
 #install.packages("tidyverse")
 install.packages(rio)
 install.packages("janitor")
-```
+
 
 Remember, package installation usually is a one-time thing on your hard drive. But when you need to load the software libraries each time you start a script. Libraries are bits of software you will have to load each time into R to make things run.
 
@@ -241,6 +241,10 @@ WSJ <- subset(MediaBucks, COMPANY=="WallStreetJournal")
 summary(WSJ$Salary)
 ```
 
+
+```{R}
+summary(MediaBucks$Salary)
+```
 Using Wildcards
 
 ```{r}
@@ -268,10 +272,29 @@ summary(Reporters$Salary)
 
 Questions:
 
-    1: Who is making $230,504 as a reporter???   
+    1: Who is making $230,504 as a reporter??? 
+    ```{R}
+    Reporters %>% 
+      select(TITLE,COMPANY,Salary) %>% 
+      filter(Salary==230504)
+  
+    ```
     2: Make a table for editors, figure out medians.   
-    3: Find highest paid editor. Resent them.   
+    ```{r}
+editors <- subset(MediaBucks, grepl("?ditor",TITLE)) 
+  
+```
+    3: Find highest paid editor. Resent them.
+```{r}
+   editors %>% 
+      select(TITLE,COMPANY,Salary) %>% 
+      filter(Salary==770000)
+```
     4: Make a table for any position involving data  
+```{r}
+data<-subset(MediaBucks,grepl("?Data", JOB_DUTIES))
+
+```
 
 Table with Black reporters at Wall Street Journal
 
@@ -351,11 +374,21 @@ This is a basic chart using ggplot. To break down the code:
     1: Build a table for NewYorkTimes employees, and determine median salary of NewYorkTimes employees   
 ```{r}
 #your answer here
+NewYorkTimes<- subset(MediaBucks, grepl("?NewYorkTimes", COMPANY))
+
+summary(NewYorkTimes$Salary)
+
 ```
 
 
       2: Identify title, gender and race of the highest paid position at NYT  
-```{
+```{r}
+NewYorkTimes %>% 
+  select(TITLE,Gender,Race,Salary) %>% 
+  filter(Salary==350000)
+
+
+```
 #your answer here
 ```
 
@@ -363,7 +396,10 @@ This is a basic chart using ggplot. To break down the code:
     3: Search for Bloomberg,  check median salary, compare to NYT results above.
 
 ```{r}
-#your answer here
+Bloomberg<- subset(MediaBucks, grepl("?Bloomberg", COMPANY))
+
+summary(Bloomberg$Salary)
+
 
 ```
 
