@@ -355,7 +355,7 @@ This is a basic chart using ggplot. To break down the code:
 
 
       2: Identify title, gender and race of the highest paid position at NYT  
-```{r}
+```{
 #your answer here
 ```
 
