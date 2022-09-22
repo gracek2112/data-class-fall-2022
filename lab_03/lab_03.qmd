@@ -12,7 +12,8 @@ knitr::opts_chunk$set(echo = TRUE)
 options(scipen=999)
 
 # Load the tidyverse here
-
+install.packages("tidyverse")
+install.packages("janitor")
 # Load janitor here
 
 
@@ -31,10 +32,15 @@ In this data set, each row represents a city or town in Maryland with the 2010 a
 -  Pacific Islander (including native Hawiian) only population
 
 Background on this data from [Social Explorer](https://www.socialexplorer.com/data/ACS2016_5yr/metadata/?ds=ACS16_5yr&table=B02001) 
+
+library(tidyverse)
+library(rio)
+library(janitor)
 ```{r}
 # Write code to load the Maryland race by city, place for 2010 - 2020 and call it md_race.
-# The data is called lab_03.csv, and is in the same folder as lab_03.qmd (this data notebook)
-
+# The data is called , and is in the same folder as lab_03.qmd (this data notebook)
+ md_race<- rio::import("lab_03.csv")
+ 
 # your answer here
 
 ```
@@ -48,9 +54,13 @@ A1:
 ```{r}
 
 # Write your code in this codeblock.
+largest5_hispanic2020 <-md_race %>% 
+  select(place, x2020_hispanic) %>% 
+slice_max(x2020_hispanic,n=5)
 
+largest5_hispanic2020
 # your answer here
-
+#The five cities inlucde Baltimore city, wheaton, germantown, silver spring, aspen hill 
 ```
 
 Q2: Find the cities with the largest Black population and arrange the results in descending order. 
@@ -59,9 +69,14 @@ A2:
 
 ```{r}
 #write your code here
+large_blackpop <-md_race %>% 
+  select(place, x2020_black) %>% 
+#slice_max(x2020_black,n=5)
+arrange(desc(x2020_black))
+large_blackpop
 
 # your answer here
-
+#Baltimore city
 ```
 
 Q3: Create a table called top_hispanic that shows the top 15 communities with the largest Hispanic population in 2020, and also display the 2010 Hispanic population and the total community population for 2020. Look at your results - what stands out to you? Craft a one-paragraph story pitch for your editor. 
@@ -69,7 +84,13 @@ Q3: Create a table called top_hispanic that shows the top 15 communities with th
 A3:
 
 ```{r}
+large_hispanic2020 <-md_race %>% 
+  select(place,x2020_hispanic,x2010_hispanic,x2020_total) %>% 
+  #arrange(desc(x2020_hispanic))
+   slice_max(x2020_hispanic,n=15)
+large_hispanic2020
+ #head(large_hispanic2020,15)  
 
 # your answer here
-
+#After looking at the results from this data that pulled the population of Hispanic communities  from 2010-200 throughout Maryland, I found that the Hispanic population grew in B altimore form 2010 to 2020 In Baltimore city, Wheaton, Germantown, Aspen Hill, and Gaithurburg. Ultimately, the Hispanic population grew throughout Majority of the cities in Montgomery County. I think the an interesting angle would be to look into. the polcies that may have encourged this influx and why they to be flocking in high numbers to montogmery county, a county with one of the highest median incomes
 ```
