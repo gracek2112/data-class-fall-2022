@@ -37,7 +37,7 @@ Now we've got our `Diff_Income` column. Let's provide some context and use a per
 baltcity_income %>%
   select(Census, Neighborhood, x2010, x2020) %>%
     mutate(Diff_Income = (x2020-x2010)) %>% 
-    mutate(Diff_Pct_2020 = (x2020-x2010)/x2010*100,2))
+    mutate(Diff_Pct_2020 = (x2020-x2010)/x2010*100,2)
   
 ```
 
@@ -182,23 +182,40 @@ md_cities<- rio::import("city_md_income.csv")
 
 Which city had the highest absolute change? Which had the highest percentage change?
 ```{r}
- md_cities %>%
-  select(place,median_inc_2010,median_inc_2020) %>%
-  summarise
-    (x2020_median - x2010_median) 
-(max_2020 = max(x2020, na.rm=TRUE)
+#md_cities %>%
+ # select(place,median_inc_2010,median_inc_2020) %>%
+ # summarise
+ #   (x2020_median - x2010_median) 
+#(max_2020 = max(x2020, na.rm=TRUE)
+  
+md_cities <- md_cities %>% 
+  select(place, median_inc_2010, median_inc_2020) %>% 
+  mutate(absolute_change = median_inc_2020 - median_inc_2010) %>% 
+  mutate(percentage_change = ((median_inc_2020 - median_inc_2010)/median_inc_2010)*100)
+
+view(md_cities)
 
    
 ```
  
 Produce a table with the top 25 places ranked by the highest percentage change.
 ```{r}
- 
+top_25_places <- md_cities %>% 
+  select(place, percentage_change) %>% 
+  arrange(desc(percentage_change)) %>% 
+  head(25)
+
+view(top_25_places)
 ```
 
 Produce a second table with the top 25 places ranked by the lowest or negative percentage change.
 ```{r}
- 
+least_25_places <- md_cities %>% 
+  select(place, percentage_change) %>% 
+  arrange(percentage_change) %>% 
+  head(25)
+
+view(least_25_places)
 ```
 
 
