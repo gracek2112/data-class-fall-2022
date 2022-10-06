@@ -36,7 +36,7 @@ This tutorial uses a subset of this data [^r_visualizing_reporting-1]
 [^r_visualizing_reporting-1]: The Calls for Service were filtered as follows: CONTAINS homeless, 915, 919, 920: Downloaded 157,237 records 3/31/16 to 11/30/2019. This is 5.1% of all calls in the broader database. File renamed to: SF_311.xlsx
 
 ```{r, message=FALSE}
-SF <- read_csv("assets/data/SF_311.csv")
+SF <- read_csv("SF_311.csv")
 ```
 
 Clean column names, Process dates
@@ -50,7 +50,6 @@ The imported data recognized the date as a character text, which means you canno
 
 ```{r}
 #This cleans column names
-SF <- janitor::clean_names(SF)
 #This processes dates for analysis
 SF$call_date2 <- as.Date(SF$call_date)
 SF$call_date2 <- lubridate::mdy(SF$call_date)
@@ -118,7 +117,7 @@ years %>%
 ```
 
 This is a very basic chart. But it's hard to derive much meaning from this chart. We can order the bars from highest to lowest by count of calls per year. We can fix that by using the reorder() function to do just that:
-
+#we want to reorder the variables, if you put a - behind the n it sorts it in descdending order 
 ```{r}
 years %>%
   ggplot() +
@@ -196,7 +195,7 @@ years %>%
   coord_flip() + 
   theme_economist() +
   geom_col()+
-  geom_text(aes(label=n), hjust = -.1, size = 2.5) +
+  geom_text(aes(label=n), hjust = -.1, size = 2.2) +
     labs(
     title="311 Calls, San Francisco",
     x = "total 311 calls",
@@ -288,15 +287,32 @@ Create a new dataframe that filters for arrests and totals them by year. Call th
 
 #your code here
 
+arrest <-SF %>% 
+  filter(disposition == "ARR") %>% 
+  count(year)
+
+#2018 had the most arrest 
+  
+  
+
+
 ```
 
 
 Then create a bar chart that colors the bars by arrest total. Include a headline and caption
 ```{r}
 
-#your code here
-
-
+arrest %>%
+  ggplot() +
+  geom_bar(aes(x=reorder(year, n), weight=n)) +
+  coord_flip() + 
+  theme_minimal() + 
+  theme_economist() +
+  labs(
+    title="Total arrests by year",
+    x = "year",
+    y = "arrest",
+    caption = "source: SF PD  Call Data between 2016-2019")
 ```
 
 # Pre-Lab Question 2
@@ -310,20 +326,43 @@ https://github.com/profrobwells/Guest_Lectures/blob/5c2d631aec862cd728ebf49d7114
 ```{r}
 
 # your code here
-
+all_dispo <- SF %>% 
+select(disposition) %>% 
+count(disposition) %>% 
+  slice_max(disposition,n= 12)
 ```
 
 Create a bar chart of all_dispo and include a headline and caption
 
 
 ```{r}
-# your code here
+all_dispo %>%
+  ggplot() +
+  geom_bar(aes(x=reorder(disposition, n), weight=n)) +
+  coord_flip() + 
+  theme_minimal() + 
+  theme_economist() +
+  labs(
+    title="All Dispositions",
+    x = "total",
+    y = "disposition",
+    caption = "source: SF PDCall Data")
 ```
 
 **NERD ZONE**
 # Pre-Lab Question 3
 Take the chart above, sort the bars in descending order
 ```{r}
-# your code here
+all_dispo %>%
+  ggplot() +
+  geom_bar(aes(x=reorder(disposition, -n), weight=n)) +
+  coord_flip() + 
+  theme_minimal() + 
+  theme_economist() +
+  labs(
+    title="All Dispositions",
+    x = "total",
+    y = "disposition",
+    caption = "source: SF PDCall Data")
 ```
 
