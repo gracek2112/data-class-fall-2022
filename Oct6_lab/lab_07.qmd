@@ -10,7 +10,11 @@ When you are finished, commit changes and push to your personal GitHub repo, the
 
 ## Load libraries and establish settings
 **Task**: Load janitor and the tidyverse
+
+
 ```{r}
+library(janitor)
+library(tidyverse)
 # Turn off scientific notation
 options(scipen=999)
 
@@ -35,7 +39,23 @@ Write a headline and caption.
 
 #your answer here
 
- 
+ads1<- rio::import("ncaa_athletic_dirs.csv") 
+
+ads1_2021 <- ads1 %>% 
+  filter(year == '2021')
+
+ads1_2021 %>%
+  ggplot() +
+  geom_bar(aes(x=reorder(race_sex, count), weight=count)) +
+  coord_flip() + 
+  theme_minimal() + 
+  theme_economist() +
+  labs(
+    title="athletic directors by race and sex",
+    x = "count",
+    y = "Race_sex",
+    caption = "source:ncaa athletic data")
+
 
 ```
 
@@ -47,6 +67,16 @@ Write a headline and caption.
 ```{r}
 #your answer here  
 
+ads1%>%
+  ggplot() +
+  geom_bar(aes(x=reorder(year, count), weight=count)) +
+  theme_minimal() + 
+  theme_economist() +
+  labs(
+    title="athletic directors throughout the years",
+    x = "years",
+    y = "count",
+    caption = "source:ncaa athletic data")
 
 
 ```
@@ -67,6 +97,22 @@ Designate one line for each and a separate color: ie male_white would be blue, f
 
 ```{r}
 
+spr_dats<- rio::import("Sports_Race_ADs.csv", skip=2)
+
+spr_dats <- spr_dats %>% 
+  rename("year" = "V1", "male_white" = "V2", "male_black" = "V3", "male_other" = "V4", "female_white" = "V5", "female_black" = "V6", "female_other" = "V7", "total" = "V8")
+
+spr_dats %>%
+  ggplot() +
+  geom_line(aes(x=, y=n)) 
+
+
+
+
+ggplot(spr_dats, aes(x=year)) +
+  geom_line(aes(y=ADM), color = "blue") +
+  geom_line(aes(y=CAN), color = "brown") +
+  geom_line(aes(y=CIT), color = "green") 
 #your answer here
 
 
