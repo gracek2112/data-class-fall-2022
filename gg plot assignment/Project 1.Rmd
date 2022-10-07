@@ -1,0 +1,21 @@
+---
+title: "Project 1"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+library(janitor)
+
+balt_homeowner <- read_csv("gg plot assignment/pct_home_owner_bmore.csv")
+balt_poverty <- read_csv("gg plot assignment/pct_pov_bmore.csv")
+#balt_homeowner <- read_csv("gg plot assignment/pct_pov_family_bmore.csv")
+
+# Which year had the highest poverty rate and what city did that belong to? 
+# What are the average homeownership rates from 2015 to 2019?
+# How many neighborhoods had a poverty rate that was less than 50%?
+# Create a scatterplot showing the comparisons between the poverty rates and the homeownership rates. 
+
+  
+ 
+```
