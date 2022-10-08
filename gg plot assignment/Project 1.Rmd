@@ -11,11 +11,104 @@ balt_homeowner <- read_csv("gg plot assignment/pct_home_owner_bmore.csv")
 balt_poverty <- read_csv("gg plot assignment/pct_pov_bmore.csv")
 #balt_homeowner <- read_csv("gg plot assignment/pct_pov_family_bmore.csv")
 
-# Which year had the highest poverty rate and what city did that belong to? 
-# What are the average homeownership rates from 2015 to 2019?
-# How many neighborhoods had a poverty rate that was less than 50%?
-# Create a scatterplot showing the comparisons between the poverty rates and the homeownership rates. 
 
+balt_poverty <- clean_names(balt_poverty)
+#clean the names on the data 
+
+
+# Which year had the highest poverty rate and what neighborhood did that belong to? 
+#2015 had the highest percentage rate of poverty in the neighborhood, Poppleton
+
+balt_poverty%>%
+  arrange(desc(hhpov15))
+
+balt_poverty%>%
+  arrange(desc(hhpov16))
+
+balt_poverty%>%
+  arrange(desc(hhpov17))
+
+balt_poverty%>%
+  arrange(desc(hhpov18))
+
+balt_poverty%>%
+  arrange(desc(hhpov19))
+  
+# What are the average homeownership rates from 2015 to 2019?
+# The average homeownership rate from 2015 to 2019 is as follows: rate, rate, rate, rate, rate.
+balt_homeowner <- balt_homeowner %>% 
+  mutate(city = "Baltimore")
+
+avg_balt_homeowner <- balt_homeowner %>% 
+  group_by(city) %>% 
+  summarise(
+    avg_home_15 = mean(ownroc15, na.rm=TRUE),
+    avg_home_16 = mean(ownroc16, na.rm=TRUE),
+    avg_home_17 = mean(ownroc17, na.rm=TRUE), 
+    avg_home_18 = mean(ownroc18, na.rm=TRUE),
+    avg_home_19 = mean(ownroc19, na.rm=TRUE)) %>% 
+  view()
+
+# What was the average poverty rate in 2019 and which neighborhoods were above that(meaning they have a higher poverty rate than the average)?
+# The average poverty rate in 2019 was 16.68425. The neighborhoods below that included Poppleton/The Terraces/Hollins Market, Cherry Hill and Upton/Druid Heights, which had the highest poverty rate. 
+
+balt_poverty <- balt_poverty %>% 
+  mutate(city = "Baltimore")
+
+avg_balt_pov <- balt_poverty %>% 
+  group_by(city) %>% 
+  summarise(
+    avg_pov_19 = mean(hhpov19, na.rm=TRUE)
+  )
+
+balt_poverty %>% 
+  filter(hhpov19 > 16.68425) %>% 
+  select(csa2010, hhpov19) %>% 
+  arrange(desc(hhpov19)) %>% 
+  view()
+
+# Take the neighborhoods with the highest poverty rates and compare them to their homeownership rates in 2019 on two bar charts. 
+
+# Create a bar chart showing the comparisons of the ni between the poverty rates and the homeownership rates in 2019. 
+
+top_10_pov <- balt_poverty %>% 
+  select(csa2010, hhpov19) %>% 
+  arrange(desc(hhpov19)) %>% 
+  head(10)
+
+pov_neighborhoods_homeowner <- balt_homeowner %>% 
+  select(CSA2010, ownroc19) %>% 
+  filter(
+    CSA2010 == 'Upton/Druid Heights' | CSA2010 == 'Poppleton/The Terraces/Hollins Market' |
+    CSA2010 == 'Cherry Hill' | CSA2010 == 'Sandtown-Winchester/Harlem Park' | CSA2010 ==
+    'Oldtown/Middle East' | CSA2010 == 'Madison/East End' | CSA2010 == 'Southwest Baltimore' | 
+    CSA2010 == 'Southern Park Heights' | CSA2010 == 'Southeastern' | CSA2010 == 'Greater Rosemont'
+    ) %>% 
+  arrange(desc(ownroc19))
+
+pov_neighborhoods_homeowner %>%
+  ggplot() +
+  geom_bar(aes(x=reorder(CSA2010, ownroc19), weight=ownroc19)) +
+  coord_flip() + 
+  theme_minimal() + 
+  theme_economist() +
+  labs(
+    title="Top 10 Neighborhoods with the Highest Poverty Rates in 2019",
+    x = "Neighborhoods",
+    y = "Poverty Rate",
+    caption = "Source: Baltimore Open Data")
+
+top_10_pov %>%
+  ggplot() +
+  geom_bar(aes(x=reorder(csa2010, hhpov19), weight=hhpov19)) +
+  coord_flip() + 
+  theme_minimal() + 
+  theme_economist() +
+  labs(
+    title="Household Ownership of Neighborhoods with the Highest Poverty Rates in 2019",
+    x = "Neighborhoods",
+    y = "Household Ownership Rate",
+    caption = "Baltimore Open Data")
   
  
 ```
