@@ -346,6 +346,10 @@ name | number_of_large employers
 Kent County | 15
 
 You want to join these two dataframes to answer the question "which Maryland county has the highest number of large employees per person?"
+```{R}
+#Joining dataframes like this may be difficult because there must be matches on one or more columns,however, they may have similar columns.  If we join these datsets to make a relational database, I think ta table would appear with columns that display population of those in Kent county name of the employers over 1000 which we can use to specify a common key for R use to use to match the data elements.
+
+```
 
 What do you think will happen when you attempt to "inner_join" these two tables?
 
