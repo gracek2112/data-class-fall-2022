@@ -68,8 +68,8 @@ Write a headline and caption.
 #your answer here  
 
 ads1%>%
-  ggplot() +
-  geom_bar(aes(x=reorder(year, count), weight=count)) +
+  ggplot(ads) (aes(x=reorder(year, count), fill=race_sex))+
+  geom_col(position=dodge)
   theme_minimal() + 
   theme_economist() +
   labs(
@@ -97,7 +97,7 @@ Designate one line for each and a separate color: ie male_white would be blue, f
 
 ```{r}
 
-spr_dats<- rio::import("Sports_Race_ADs.csv", skip=2)
+spr_dats<- rio::import("Sports_Race_ADs.csv", skip=1)
 
 spr_dats <- spr_dats %>% 
   rename("year" = "V1", "male_white" = "V2", "male_black" = "V3", "male_other" = "V4", "female_white" = "V5", "female_black" = "V6", "female_other" = "V7", "total" = "V8")

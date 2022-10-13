@@ -153,12 +153,9 @@ summarise(
   )
 
 life_stats <- md_death %>% 
-  filter()
   group_by(county) %>% 
 summarise(
-    avg_life_expectancy = mean(life_expectancy, na.rm=TRUE)
-
-  ) %>% 
+    avg_life_expectancy = mean(life_expectancy, na.rm=TRUE)) %>% 
   arrange(avg_life_expectancy)
 
 top_20_low_life <- life_stats %>% 
@@ -177,20 +174,37 @@ Then produce a short table that summarizes the number of Census tracts above or 
 
 
 ```{r}
+avg_life_expect_balt <- life_expect_balt_death %>% 
+  mutate(county = "Baltimore city, MD")
 
-life_expect_balt_death %>% 
-  mean(avg_life_expectancy)
+avg_life_expect_balt <- avg_life_expect_balt%>% 
+  group_by(county) %>% 
+  summarise(avg_life_expect_balt = mean(avg_life_expectancy, na.rm=TRUE))
 
-life_expect_balt_death <- balt_death2 %>% 
-  group_by(neighborhood) %>% 
-  summarise(
-    avg_life_expectancy = mean(life_expectancy, na.rm=TRUE)
+balt_death <- balt_death %>% 
+  mutate(avg_life_expect_balt = "72.98265") %>% 
+  mutate(above_avg = case_when(life_expectancy < avg_life_expect_balt ~ "no", 
+                               life_expectancy > avg_life_expect_balt ~ "yes"))
+
+#balt_death %>% 
+
+
+
+
+
+
+
+md_death_stats <- md_death %>% 
+  group_by(state) %>% 
+summarise(
+    avg_life_expectancy = mean(life_expectancy, na.rm=TRUE),
+    median_life_expectancy = median(life_expectancy, na.rm=TRUE),
+     min_life_expectancy = min(life_expectancy, na.rm=TRUE),
+     max_life_expectancy = max(life_expectancy, na.rm=TRUE)
   ) %>% 
-  arrange(desc(avg_life_expectancy))
-  
-summary(life_expect_balt_death)
+  view()
 
-
+After reviewing the  Census tracts above or below the average life expectancy rate, i was suprised to find the maximum life expectancy was 96. I also did not realize was surprised to find the average life expetcancy was not mroe than 72 in Baltimore city. 
 
 ```
 

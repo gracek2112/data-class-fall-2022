@@ -66,7 +66,7 @@ A2:
 #write your code here
 pct_black <-md_race %>% 
   select(place, x2010_black, x2020_black,x2010_total, x2020_total) %>% 
-  filter(x2010_black > 20000) %>% 
+  (x2010_black > 20000) %>% 
 slice_max(x2020_black,n=10) %>% 
  mutate(Percent_total = (x2020_total/x2010_total)) 
 #arrange(desc(x2020_black))

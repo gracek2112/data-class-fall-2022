@@ -62,7 +62,8 @@ baltcity_income %>%
   
 ```
 
-So we know who the winners since the descending sort by `Diff_Pct_2020` shows us Census tracts by the highest percentage first. 
+So we know who the winners since the descending 
+by `Diff_Pct_2020` shows us Census tracts by the highest percentage first. 
 Now, which areas suffered the biggest declines in median income? We will copy the previous code and alter the arrange so it is ascending from the lowest value.
 
 ```{r}
@@ -223,6 +224,6 @@ view(least_25_places)
 Answer this question in English: Write in Elms
 
 2) Building on the previous lesson on filtering, describe how you would determine the median value of the percentage change and produce a table with the 10 neighborhoods with the highest change and the 10 with the lowest change.
- 
-
- 
+```{r} 
+# I would use the "median" function on the percentage change column. For the tables, I would create a new dataset from the main dataset - which is md_cities - select the percentage_change and the neighborhoods, arrange the percentage change in both ascending and descending order and use the head function to show the top 10 for each. 
+``` 
