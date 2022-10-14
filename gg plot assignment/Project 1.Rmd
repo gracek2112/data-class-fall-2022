@@ -6,17 +6,28 @@ output: html_notebook
 ```{r}
 library(tidyverse)
 library(janitor)
+library(ggplot2)
+library(ggthemes)
 
 balt_homeowner <- read_csv("pct_home_owner_bmore.csv")
 balt_poverty <- read_csv("pct_pov_bmore.csv")
 #balt_homeowner <- read_csv("gg plot assignment/pct_pov_family_bmore.csv")
+```
 
+```{r}
+#What does the data mean: In the data provided by Baltimore Neighborhood Indicators Alliance, balt_poverty table  measures the percentage of households whose income fell below the poverty threshold out of all households in an area. Baltimore Neighborhood Indicators Alliance took perctange of the population of Baltimore city which is a little over 500,000. The benchmark of poverty are housholds who make less than approximately 20,000.  
 
+# The varibles such hhpov and hhpov16 indicates the Household poverty for that given year 
+#the variables variables mean in balt_homeowner such ownroc10 indicate owner occupied housing residents for that given year. CSA stands for  Community Statistical Area. 
+```
+
+```{r}
 balt_poverty <- clean_names(balt_poverty)
 #clean the names on the data 
 
-
-# Which year had the highest poverty rate and what neighborhood did that belong to? 
+```
+````{r}
+#  1 Which year had the highest poverty rate and what neighborhood did that belong to? 
 #2015 had the highest percentage rate of poverty in the neighborhood, Poppleton
 
 balt_poverty%>%
@@ -33,9 +44,11 @@ balt_poverty%>%
 
 balt_poverty%>%
   arrange(desc(hhpov19))
-  
-# What are the average homeownership rates from 2015 to 2019?
-# The average homeownership rate from 2015 to 2019 is as follows: rate, rate, rate, rate, rate.
+```
+
+```{r}  
+# 2What are the average homeownership rates from 2015 to 2019?
+# The average homeownership rate from 2015 to 2019 is as follows: 56.1318, ,55.00812,	54.64898,52.63286.
 balt_homeowner <- balt_homeowner %>% 
   mutate(city = "Baltimore")
 
@@ -48,9 +61,11 @@ avg_balt_homeowner <- balt_homeowner %>%
     avg_home_18 = mean(ownroc18, na.rm=TRUE),
     avg_home_19 = mean(ownroc19, na.rm=TRUE)) %>% 
   view()
+```
 
-# What was the average poverty rate in 2019 and which neighborhoods were above that(meaning they have a higher poverty rate than the average)?
-# The average poverty rate in 2019 was 16.68425. The neighborhoods below that included Poppleton/The Terraces/Hollins Market, Cherry Hill and Upton/Druid Heights, which had the highest poverty rate. 
+```{r}
+#3:  What was the average poverty rate in 2019 and which neighborhoods were above that(meaning they have a higher poverty rate than the average)?
+#3:The average poverty rate in 2019 was 16.68425. The neighborhoods below that included Poppleton/The Terraces/Hollins Market, Cherry Hill and Upton/Druid Heights, which had the highest poverty rate. 
 
 balt_poverty <- balt_poverty %>% 
   mutate(city = "Baltimore")
@@ -63,18 +78,20 @@ avg_balt_pov <- balt_poverty %>%
 
 balt_poverty %>% 
   filter(hhpov19 > 16.68425) %>% 
-  select(csa2010, hhpov19) %>% 
+  select(CSA2010, hhpov19) %>% 
   arrange(desc(hhpov19)) %>% 
   view()
+```
 
+```{r}
 # Take the neighborhoods with the highest poverty rates and compare them to their homeownership rates in 2019 on two bar charts. 
 
 # Create a bar chart showing the comparisons of the ni between the poverty rates and the homeownership rates in 2019. 
 
 top_10_pov <- balt_poverty %>% 
-  select(csa2010, hhpov19) %>% 
+  select(CSA2010, hhpov19) %>% 
   arrange(desc(hhpov19)) %>% 
-  head(10)
+  slice_max(hhpov19, n=10)
 
 pov_neighborhoods_homeowner <- balt_homeowner %>% 
   select(CSA2010, ownroc19) %>% 
@@ -100,7 +117,7 @@ pov_neighborhoods_homeowner %>%
 
 top_10_pov %>%
   ggplot() +
-  geom_bar(aes(x=reorder(csa2010, hhpov19), weight=hhpov19)) +
+  geom_bar(aes(x=reorder(CSA2010, hhpov19), weight=hhpov19)) +
   coord_flip() + 
   theme_minimal() + 
   theme_economist() +
@@ -110,5 +127,5 @@ top_10_pov %>%
     y = "Household Ownership Rate",
     caption = "Baltimore Open Data")
   
- 
+# There are 2 charts, the first chart inidcates the neighborhood with highest rates and the second shows the householdownership rates in nieghborhoods with the highest poverty rates. 
 ```
