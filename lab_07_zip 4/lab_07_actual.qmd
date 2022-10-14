@@ -11,7 +11,11 @@ When you are finished, commit changes and push to your personal GitHub repo, the
 
 ## Load libraries and establish settings
 **Task**: Make a code block and load janitor and the tidyverse
+```{r}
+library(tidyverse)
+library(janitor)
 
+```
 ## Load data
 
 For today's lab, we are using the DEA's ARCOS database, which tracks shipments of opioids and other controlled substances from manufacturers to pharmacies.  As we will read this week, the Washington Post used this data to show which communities were flooded by opioids during the death and overdose crisis of the last two decades. 
@@ -24,12 +28,63 @@ There are four tables in the data folder.
 * state_crosswalk.csv is a simple dataframe with two columns listing the state and its abbreviation.  You may need to use this for the second question.
 
 **Task**: Create a codeblock and load the four dataframes using appropriate names below.
+```{r}
+total_opiods_county <- read_csv("data/arcos.csv") 
+total_county_pop <-read_csv("data/county_population_2014.csv")
+total_state_pop <- read_csv("data/state_population_2014.csv")
+state_abbrv <- read_csv("data/state_crosswalk.csv")
 
+
+
+
+```
 ## Questions
 **Task** Create codeblocks in the space below and answer the questions. 
 
 **Q1** Which county or city received the most total opioid pills per person? Add up all the pills between 2006 and 2014 when doing this calculation. How many total pills, and what was the per person rate?
 
+```{r}
+updated_county_table <- total_opiods_county %>% 
+  group_by(buyer_county,buyer_state,countyfips) %>% 
+summarise(total_pills= sum(total_pills, na.rm=TRUE)) %>% 
+inner_join(total_county_pop,by=c("countyfips"="geoid")) %>% 
+mutate(pills_per_person=(total_pills/total_population_2014)) %>% 
+arrange(desc(pills_per_person))
+# Norton CITY had the most most total opioid pills per person with 2628.9340
+
+
+
+  
+  
+```
+
+
+
 **Q2** Which U.S. state had the highest number of opioid pills per person for pills shipped in 2014? How many total pills, and what was the per person rate? How did that compare to Washington, D.C.?
+```{r}
+# join state_abbr to total_state_pop and save the result 
+
+
+# do the opioids group_by and save that
+
+# join that state opioid total to the result of the first join 
+
+# mutate 
+
+
+# join total_state_pop to total_opiods_county (you want to put both total_population_2014 and state columns in the total_opiods_county dataframe)
+# After joining the two, mutate a new column that calculates per person e.g: mutate(pills_per_person=(total_pills/total_population_2014)). Then arrange in descending order the pills_per_person and you'll get the state. 
+# After getting the state, look for the total pills of that state as well as the pills_per_person. 
+# Then get the pills of DC and the pills_per_person. And then compare. 
+
+ total_opiods_county %>% 
+  group_by(buyer_state) %>% 
+summarise(total_pills= sum(total_pills, na.rm=TRUE)) %>% 
+ inner_join(state_abbrv,by=c("buyer_state"="state_abb")) %>% 
+  inner_join(total_state_pop by=c("state_name"="stat") %>% 
+arrange(desc(pills_per_person))
+
+
+``` 
 
 **Q3** Write a sentence that could be dropped in as the lede of a news story from the finding in question two. 
