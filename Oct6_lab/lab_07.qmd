@@ -78,6 +78,10 @@ ads1%>%
     y = "count",
     caption = "source:ncaa athletic data")
 
+  ads1%>%
+  ggplot() +
+  geom_bar(aes(x=reorder(year,count), fill=race_sex)) +
+  coord_flip()
 
 ```
 
@@ -105,9 +109,6 @@ spr_dats <- spr_dats %>%
 spr_dats %>%
   ggplot() +
   geom_line(aes(x=, y=n)) 
-
-
-
 
 ggplot(spr_dats, aes(x=year)) +
   geom_line(aes(y=ADM), color = "blue") +

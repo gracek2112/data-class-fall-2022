@@ -7,8 +7,8 @@ output: html_notebook
 library(tidyverse)
 library(janitor)
 
-balt_homeowner <- read_csv("gg plot assignment/pct_home_owner_bmore.csv")
-balt_poverty <- read_csv("gg plot assignment/pct_pov_bmore.csv")
+balt_homeowner <- read_csv("pct_home_owner_bmore.csv")
+balt_poverty <- read_csv("pct_pov_bmore.csv")
 #balt_homeowner <- read_csv("gg plot assignment/pct_pov_family_bmore.csv")
 
 
