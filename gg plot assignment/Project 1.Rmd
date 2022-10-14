@@ -65,6 +65,7 @@ avg_balt_homeowner <- balt_homeowner %>%
 
 ```{r}
 #3:  What was the average poverty rate in 2019 and which neighborhoods were above that(meaning they have a higher poverty rate than the average)?
+
 #3:The average poverty rate in 2019 was 16.68425. The neighborhoods below that included Poppleton/The Terraces/Hollins Market, Cherry Hill and Upton/Druid Heights, which had the highest poverty rate. 
 
 balt_poverty <- balt_poverty %>% 
@@ -129,3 +130,14 @@ top_10_pov %>%
   
 # There are 2 charts, the first chart inidcates the neighborhood with highest rates and the second shows the householdownership rates in nieghborhoods with the highest poverty rates. 
 ```
+```{r}
+#Reporting memo/pitch: After observing data tables that reviewed the Percent of Family Households Living Below the Poverty Line and Percentage of Housing Units that are Owner-Occupied. 2015 had the highest percentage rate of poverty and he neighborhoods affected were Poppleton, Druid Heights Cherry Hill, and Harlem Park. While cities like Baltimore are commonly known for the lack of economic opportunity, one thing that would be fascinating to learn is why that is and what is prevalent in these neighborhoods and who is responsible.  In addition, I learned the average homeownership has decreased from 2015-2019. In 2015 the average home ownership was 56.1318, while the average home ownership was 52.63286. It would be incredible to learn more about the factors at why it has declined over the years, what city, county,state, or governmental policies influenced this. While the housing crisis was in 2008, 7 years may not have been enough to change the economic downturn. Just a few years later, in 2019, the average poverty rate was at 16.6842. The neighborhoods below that included Poppleton/The Terraces/Hollins Market, Cherry Hill and Upton/Druid Heights, which had the highest poverty rate. 
+
+#tweet 1:Druid heights and Poppleton continue high poverty rates throughout 2015-2019
+#tweet 2: Homeownership in neighborhoods such as southern park heights and greater Rosemont continue  to see low trends of homeownership 
+
+
+
+``` 
+
+
