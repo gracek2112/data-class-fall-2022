@@ -79,18 +79,24 @@ avg_balt_pov <- balt_poverty %>%
 
 balt_poverty %>% 
   filter(hhpov19 > 16.68425) %>% 
-  select(CSA2010, hhpov19) %>% 
+  select(csa2010, hhpov19) %>% 
   arrange(desc(hhpov19)) %>% 
+  view()
+
+balt_poverty %>% 
+  filter(hhpov18 > 16.68425) %>% 
+  select(csa2010, hhpov18) %>% 
+  arrange(desc(hhpov18)) %>% 
   view()
 ```
 
 ```{r}
 # Take the neighborhoods with the highest poverty rates and compare them to their homeownership rates in 2019 on two bar charts. 
 
-# Create a bar chart showing the comparisons of the ni between the poverty rates and the homeownership rates in 2019. 
+# Create a bar chart showing the comparisons of the relationship  between the poverty rates and the homeownership rates in 2019. 
 
 top_10_pov <- balt_poverty %>% 
-  select(CSA2010, hhpov19) %>% 
+  select(csa2010, hhpov19) %>% 
   arrange(desc(hhpov19)) %>% 
   slice_max(hhpov19, n=10)
 
