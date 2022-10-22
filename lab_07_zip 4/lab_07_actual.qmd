@@ -77,15 +77,17 @@ arrange(desc(pills_per_person))
 # After getting the state, look for the total pills of that state as well as the pills_per_person. 
 # Then get the pills of DC and the pills_per_person. And then compare. 
 
- total_opiods_county %>% 
+ highest_pill<- total_opiods_county %>% 
+  filter(year==2014)%>% 
   group_by(buyer_state) %>% 
 summarise(total_pills= sum(total_pills, na.rm=TRUE)) %>% 
  inner_join(state_abbrv,by=c("buyer_state"="state_abb")) %>% 
-  inner_join(total_state_pop,by=c("state_name"="stat")) %>% 
+  inner_join(total_state_pop,by=c("state_name"="state")) %>% 
   mutate(pills_per_person=(total_pills/total_population_2014)) %>% 
 arrange(desc(pills_per_person))
+# make sure to match the correct variables 
 
-
+#modify table as you go down, you must have a connection between the columns.
 ``` 
 
 **Q3** Write a sentence that could be dropped in as the lede of a news story from the finding in question two. 
