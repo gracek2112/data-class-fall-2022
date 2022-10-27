@@ -1,0 +1,92 @@
+#lab_08
+Sean Mussenden, Aug 16, 2022
+
+## About this lab
+
+To complete this lab, you need to:
+* write code in empty codeblocks provided to answer questions included (look for **Q**).
+* write out the answer in the form of a complete sentence in the space given (look for **A**).
+
+When you are finished, commit changes and push to your personal GitHub repo, then submit the URL to this document on ELMS.
+
+## Load libraries and establish setting 
+**Task**: Load janitor and the tidyverse and sf
+
+```{r}
+library(tidyverse)
+library(janitor)
+library(sf)
+
+```
+
+
+
+## Load data
+```{r}
+Bmore_homs <- read_rds("data/baltimore_homicides.rds")
+Bmore_shape <- read_rds("data/baltimore_tract_shapefiles.rds")
+Bmore_demo<- read_rds("data/baltimore_tract_demographics.rds")
+
+
+``` 
+
+You have been given two spatial dataframes and one regular dataframe to load.  The dataframes are:
+
+* baltimore_homicides.rds | spatial | location and details about each Baltimore homicide between 2007 and 2017, including information about the status (open, closed with arrest, closed without arrest) and the exact location. Details on the data: https://github.com/washingtonpost/data-homicides
+* baltimore_tract_shapefiles.rds | spatial | polygons of each census tract in Baltimore
+* baltimore_tract_demographics.rds | regular | the total population and white population of each baltimore Census tract in 2017.
+
+#we have two values her on white pop, and pop. White pop is about 50% of the total pop. The ones that are 50 percent greater, you would catagorize them. 
+
+**Task** Load the data
+
+## Questions
+
+**Q1** Are homicides that occur in majority white Census tracts in Baltimore solved at a higher rate than homicides in non-majority white Baltimore census tracts?
+* Write up your findings in three paragraphs that could be dropped into a news story, with the answer to the question as the lede. 
+* Include any other relevant details.
+* Output a table with relevant results. 
+* Output at least one map visualization pertinent to your finding. 
+
+```{r}
+maj_white_pop <- Bmore_demo %>% 
+  clean_names() %>% 
+  mutate(percent_white_pop=white_pop/total_pop) %>% 
+select(geoid,name,percent_white_pop) %>% 
+  mutate(neighboorhood_catagory=case_when(percent_white_pop>.50~"majority_white",TRUE~ "not_majority_white"))
+
+maj_white_pop<- maj_white_pop %>% 
+as.data.frame() %>% 
+  inner_join(Bmore_shape) %>% 
+ st_as_sf()
+
+shootings_by_neighborhood <- Bmore_homs %>%
+  st_join(maj_white_pop) %>%
+  as_tibble()
+
+cases_by_nhood <- shootings_by_neighborhood %>%
+  group_by(neighboorhood_catagory,disposition) %>%
+  count() %>% 
+  pivot_wider(names_from=disposition, values_from=n) %>%
+  clean_names() %>% 
+  mutate(total_shootings = closed_by_arrest+closed_without_arrest+open_no_arrest) %>%
+  mutate(unsolved = open_no_arrest + closed_without_arrest) %>%
+  mutate(pct_unsolved = unsolved/total_shootings*100)
+
+
+
+
+ggplot() +
+  geom_sf(data=Bmore_shape) +
+  geom_sf(data=Bmore_homs)
+
+
+```
+
+**A1** 
+
+# After creating a new dataset from the Baltimore demographics, I began to observe the data in my new table I named my maj_white_pop. At first glance, I couldn't tell much about the new column I created, Percent_white_pop. However, that changed when I  looked at the shootings_by_neighborhood table which I created from the Baltimore homicide rate. When scanning the neighborhood county table I was able to easily observe there were far more Not_majority_white subjects filled in a large portion of a column I produced in the data frame. 
+
+#Then I created a new table named cases_by_nhood. Using the pivot_wider, allowed me to look at the data more clearly. When looking at this, I was able to see that the closed arrest belonged to the neighborhoods that are majority white and the ones that aren't. 128 cases were closed by arrest compared to 874 cases closed by arrest in neighborhoods that are not majority white. I think the most jarring disparities I saw were in the shooting column which displayed 239 shootings in white neighborhoods and 2588 shootings in those neighborhoods that are not majority white.  
+
+# The most startling numbers were the open cases and the disparity between the neighborhoods that are majority white and those that aren't. While we cannot jump to conclusions based on just the numbers, I think 96 cases without any arrest in the majority of white neighborhoods as opposed to the indicates something 2588 open cases without an arrest indicate something suspicious is going on. The number of unsolved cases in the Majority white neighborhoods included 111 cases while 1714 unsolved cases remained in the other neighborhoods. 

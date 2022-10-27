@@ -84,5 +84,7 @@ MD_black_pop %>%
   mutate(avg_black_pop = as.numeric(black_pop)) %>% 
   summarise(avg_black_pop = mean(black_pop,na.rm=TRUE))
 
+view(avg_black_pop)
+  
 
 
