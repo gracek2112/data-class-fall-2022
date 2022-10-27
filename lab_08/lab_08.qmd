@@ -57,7 +57,6 @@ mutate(hispanic_pct=(hispanic_pop/total_pop)*100) %>%
 #Montgomery county 
 ```
 
-``` 
 **Q2**  What is the total population of people who identify as white alone in Maryland? 
 **A2**  
 
@@ -71,6 +70,7 @@ mutate(MD_white_pop = as.numeric(white_pop)) %>%
 summarise(
 white_pop=sum(white_pop,na.rm=TRUE)
 )
+#
 
 # I am not sure why my code won't run 
 ``` 
@@ -81,6 +81,9 @@ white_pop=sum(white_pop,na.rm=TRUE)
 MD_black_pop %>%  
 
 #calculate avg without baltimore 
+
+avg_black_pop <- maryland_black
+mutate(black_pop=as.numeric(black_pop))
 
 
 
