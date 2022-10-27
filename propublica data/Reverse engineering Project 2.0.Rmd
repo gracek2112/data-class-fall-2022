@@ -1,0 +1,18 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+
+```{r}
+library(tidyverse)
+library(janitor)
+```
+```{r}
+allegations<- rio::import("allegations_202007271729.csv")
+clean_names(allegations)
+
+
+``` 
+
+
