@@ -66,27 +66,23 @@ MD_white_pop$white_pop<-str_replace(MD_white_pop$white_pop,"13510000","13510")
 MD_white_pop %>% 
 as.data.frame() %>% 
 clean_names() %>% 
-mutate(MD_white_pop = as.numeric(white_pop)) %>% 
+mutate(white_pop = as.numeric(white_pop)) %>% 
 summarise(
 white_pop=sum(white_pop,na.rm=TRUE)
 )
-#
+# total white pop is 3275048	
 
-# I am not sure why my code won't run 
 ``` 
 
 **Q3** What is the average Black population in all Maryland counties? 
 **A3** 
-```{}
-MD_black_pop %>%  
+```{r}
+MD_black_pop[3, 3] = 243098
+MD_black_pop[24, 3] = 375002
 
-#calculate avg without baltimore 
-
-avg_black_pop <- maryland_black
-mutate(black_pop=as.numeric(black_pop))
-
-
+MD_black_pop %>% 
+  mutate(avg_black_pop = as.numeric(black_pop)) %>% 
+  summarise(avg_black_pop = mean(black_pop,na.rm=TRUE))
 
 
-``` 
 
