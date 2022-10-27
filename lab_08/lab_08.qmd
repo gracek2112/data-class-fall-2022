@@ -85,7 +85,7 @@ MD_black_pop %>%
   summarise(avg_black_pop = mean(black_pop,na.rm=TRUE)) %>% 
   view()
 
-#The avge Black population is 	
+#The avverage Black population is 	
 75130.33
 ``` 
 
