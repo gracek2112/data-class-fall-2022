@@ -12,6 +12,11 @@ library(janitor)
 allegations<- rio::import("allegations_202007271729.csv")
 clean_names(allegations)
 
+McCormack<-allegations %>%
+select(last_name, rank_incident, fado_type, complainant_ethnicity, board_disposition) %>%
+filter(last_name ==
+"Mccormack")
+
 
 ``` 
 
