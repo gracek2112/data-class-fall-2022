@@ -83,11 +83,13 @@ ranked_supervisors_allegations <- allegations %>%
   filter(rank_abbrev_now != "DTS") %>% 
   filter(rank_abbrev_now != "CPT") %>% 
   filter(rank_abbrev_now != "LCD") %>% 
-  filter(rank_abbrev_now != "LSA") %>% 
+  filter(rank_abbrev_now != "LSA") 
 
 ranked_supervisors_allegations%>% 
-  group_by(unique_mos_id) %>% 
-  summarise(total = n())
+  group_by(first_name, last_name, unique_mos_id) %>% 
+  summarise(total = n()) %>% 
+  arrange(desc(total))
+
 
 ```
 # fourth article finding

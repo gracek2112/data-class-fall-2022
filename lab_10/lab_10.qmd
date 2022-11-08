@@ -92,12 +92,32 @@ clean_names() %>%
 **A1** 
 
 **Q2** How many distinct shooting events were there within 200 meters of any DC school in 2019, during school hours?
+
+```{r}
+
+
+
+
+
+``` 
 **A2** 
 
 **Q3** How many distinct schools had a shooting event within 200 meters in 2019, during school hours?
+```{r}
+
+
+
+
+``` 
 **A3** 
 
-**Q4** Produce a dataframe with the shootings that occurred near the answer to question 1. Write an anecdotal top of a story centering on shootings near that school in 2019, followed by a few paragraphs of context from the answers to question 2 and 3.  
+**Q4** Produce a dataframe with the shootings that occurred near the answer to question 1. Write an anecdotal top of a story centering on shootings near that school in 2019, followed by a few paragraphs of context from the answers to question 2 and 3.
+```{r}
+
+
+
+
+``` 
 **A4**
 
 
