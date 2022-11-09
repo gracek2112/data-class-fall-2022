@@ -64,24 +64,23 @@ dc_school_days <- read_rds("data/dc_school_days_2019.rds")
 
 **Q1** Students in what Washington school were exposed to the most gunshot events during school hours in 2019? How many?
 ```{r}
-
-open_school_days <-dc_school_days %>% 
-clean_names() %>% 
- filter(str_detect("open_school", school_status)) %>% 
-
-time_shooting <-location_gunshots %>% 
+open_school_days <- dc_school_days %>% 
   clean_names() %>% 
-  filter(year =="2019", hour>6, hour<16, type!="gunshot_or_Firecracker")
+  filter(school_status == "school_open")
+
+time_shooting <- location_gunshots %>% 
+  clean_names() %>% 
+  filter(year =="2019" & hour > 6 & hour < 16 & type != "gunshot_or_Firecracker")
 
 shootings <- time_shooting %>% 
   clean_names() %>% 
   inner_join(open_school_days, by="date")
 
-buffered_schools<- location_dc_schools %>% 
-  mutate(geometry= st_buffer(geometry,dist=200)) 
+buffered_schools <- location_dc_schools %>% 
+  mutate(geometry = st_buffer(geometry,dist=200)) 
 
 shot_schools <- buffered_schools %>% 
-clean_names() %>% 
+  clean_names() %>% 
   st_join(shootings,left="False") %>% 
   group_by(school_name) %>% 
   count() %>% 
@@ -90,29 +89,86 @@ clean_names() %>%
 
 ``` 
 **A1** 
+Ketcham ES
 
 **Q2** How many distinct shooting events were there within 200 meters of any DC school in 2019, during school hours?
 
 ```{r}
+open_school_days <- dc_school_days %>% 
+  clean_names() %>% 
+  filter(school_status == "school_open")
+
+time_shooting <- location_gunshots %>% 
+  clean_names() %>% 
+  filter(year =="2019" & hour > 6 & hour < 16 & type != "gunshot_or_Firecracker")
+
+shootings <- time_shooting %>% 
+  clean_names() %>% 
+  inner_join(open_school_days, by="date")
+
+buffered_schools <- location_dc_schools %>% 
+  mutate(geometry = st_buffer(geometry,dist=200)) 
 
 
-
-
+shot_schools <- buffered_schools %>% 
+  clean_names() %>% 
+  st_join(shootings, left="FALSE") %>% 
+  
+shot_schools %>% 
+  group_by(school_name) %>% 
+  count() %>% 
+  summarise(total = sum(n))
 
 ``` 
 **A2** 
+186
 
 **Q3** How many distinct schools had a shooting event within 200 meters in 2019, during school hours?
 ```{r}
+open_school_days <- dc_school_days %>% 
+  clean_names() %>% 
+  filter(school_status == "school_open")
 
+time_shooting <- location_gunshots %>% 
+  clean_names() %>% 
+  filter(year =="2019" & hour > 6 & hour < 16 & type != "gunshot_or_Firecracker")
 
+shootings <- time_shooting %>% 
+  clean_names() %>% 
+  inner_join(open_school_days, by="date")
 
+buffered_schools <- location_dc_schools %>% 
+  mutate(geometry = st_buffer(geometry,dist=200)) 
 
+dist_sch <- buffered_schools %>% 
+  clean_names() %>% 
+  st_join(shootings,left= "FALSE") %>% 
+   dist_sch(school_name)
 ``` 
 **A3** 
 
 **Q4** Produce a dataframe with the shootings that occurred near the answer to question 1. Write an anecdotal top of a story centering on shootings near that school in 2019, followed by a few paragraphs of context from the answers to question 2 and 3.
 ```{r}
+
+open_school_days <- dc_school_days %>% 
+  clean_names() %>% 
+  filter(school_status == "school_open")
+
+time_shooting <- location_gunshots %>% 
+  clean_names() %>% 
+  filter(year =="2019" & hour > 6 & hour < 16 & type != "gunshot_or_Firecracker")
+
+shootings <- time_shooting %>% 
+  clean_names() %>% 
+  inner_join(open_school_days, by="date")
+
+buffered_schools <- location_dc_schools %>% 
+  mutate(geometry = st_buffer(geometry,dist=200)) 
+
+center_near <- buffered_schools %>% 
+clean_names() %>% 
+st_join(shootings,left="FALSE") %>% 
+Filter(grepl("Ketcham ES,"school_name")
 
 
 
