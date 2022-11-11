@@ -36,14 +36,14 @@ library(janitor)
 # Spotify API package
 ###
 
-# install.packages('spotifyr')
-# library(spotifyr)
+install.packages('spotifyr')
+library(spotifyr)
 
 ###
-# tidycensus
+library(tidycensus)
 ###
 
-# library(tidycensus)
+library(tidycensus)
 
 ```
 
@@ -54,7 +54,7 @@ library(janitor)
 Use the U.S. census access token you created for this week's lab.  You can store it by editing the block below to replace 'YOUR KEY HERE' with your actual key, a long string of letters and numbers. If you need to sign up for another one, you can do so here:  [apply for an API key with the Census Bureau](https://api.census.gov/data/key_signup.html). 
 
 ```{r}
-census_api_key("YOUR KEY HERE", install=TRUE)
+census_api_key("4f058a37eca05017496b68f17e6edd784bf8a4df", install=TRUE)
 ```
 
 ### spotifyR
@@ -82,8 +82,8 @@ Getting a key to use the Spotify api is a tiny bit more complicated than the tid
 # Store your passwords to access the spotify api
 ###
 
-Sys.setenv(SPOTIFY_CLIENT_ID = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXX')
-Sys.setenv(SPOTIFY_CLIENT_SECRET = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX')
+Sys.setenv(SPOTIFY_CLIENT_ID =  'e9389ddaf22d4a64a957df54c61ac826')
+Sys.setenv(SPOTIFY_CLIENT_SECRET = '453a6aa73ed04ef6a7bcded76cc5e6d7')
 
 ```
 
@@ -163,6 +163,33 @@ md <- get_acs(geography = "county",
 **Task** Pick one API to work with. 
 
 **Task** Develop two different *interesting* questions that you can answer with the data. Run them by your professor before getting started on answering, to ensure they're sufficiently interesting and possible with the data. 
+# 1: what are the top 10 songs of Taylors in regards to tempo 
+group by album name 
+# 2: what is the avergae danciblity for Taylor Swift's songs 
+#3: WHat are the  top 10 songs of Taylors in regard to energy 
+```{r}
+#Q1
+high_lively <- taylor_swift_discography %>% 
+  select(track_name, tempo) %>% 
+  arrange(tempo) %>% 
+  head(10)
+
+
+#q2
+avg_tsw_danc <- taylor_swift_discography %>% 
+  select(track_name, danceability) %>% 
+  summarise(mean(danceability))
+
+#q3 
+energy_tws<-taylor_swift_discography %>% 
+  select(track_name, energy) %>% 
+  arrange(tempo) %>% 
+  head(10)
+
+
+
+``` 
 
 **Task** Write code to answer the questions.  Write up a sentence with each of your findings. Produce at least one visualization to support one of your findings. 
+
 
