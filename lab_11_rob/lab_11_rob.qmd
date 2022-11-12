@@ -182,7 +182,7 @@ avg_tsw_danc <- taylor_swift_discography %>%
 
 #q3 
 energy_tws<-taylor_swift_discography %>% 
-  select(track_name, energy) %>% 
+  select(track_name, ) %>% 
   arrange(tempo) %>% 
   head(10)
 
