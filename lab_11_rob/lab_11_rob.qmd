@@ -104,6 +104,9 @@ Though some of the functions in this package will allow you to pull your own lis
 Sample questions: have Taylor Swift's songs gotten longer as she's aged?  Are they more or less danceable today than they were five years ago?
 
 ```{r}
+taylor_swift_discography <- read_rds("taylor_swift_discography.rds")
+
+taylor_swift_discography <- read_rds("data/taylor_swift_discography.rds")
 
 ###
 # Set artist
@@ -112,11 +115,11 @@ Sample questions: have Taylor Swift's songs gotten longer as she's aged?  Are th
 artist <- "taylor swift"
 
 
+
 ###
 # Get artist discography
 ###
 
-taylor_swift_discography <- get_discography(artist, get_spotify_access_token())
 
 ###
 # Write it out because it takes a while to load
@@ -163,33 +166,64 @@ md <- get_acs(geography = "county",
 **Task** Pick one API to work with. 
 
 **Task** Develop two different *interesting* questions that you can answer with the data. Run them by your professor before getting started on answering, to ensure they're sufficiently interesting and possible with the data. 
-# 1: what are the top 10 songs of Taylors in regards to tempo 
-group by album name 
-# 2: what is the avergae danciblity for Taylor Swift's songs 
-#3: WHat are the  top 10 songs of Taylors in regard to energy 
+# 1: what are the lowest 10 songs of Taylors in regards to tempo 
+# 2: what is the avergae danciblity for each of taylors albums 
+#3: WHat are the  top 10 enegtic songs by taylor swift 
 ```{r}
 #Q1
 high_lively <- taylor_swift_discography %>% 
-  select(track_name, tempo) %>% 
+  select(track_name,tempo) %>% 
   arrange(tempo) %>% 
   head(10)
+view(high_lively)
 
 
 #q2
-avg_tsw_danc <- taylor_swift_discography %>% 
-  select(track_name, danceability) %>% 
-  summarise(mean(danceability))
+avg_tsw_danc <- taylor_swift_discography%>% 
+select(danceability,track_name,album_name) %>% 
+group_by(album_name)%>% 
+summarise(mean(danceability)) %>% 
+view(avg_tsw_danc)
 
 #q3 
 energy_tws<-taylor_swift_discography %>% 
-  select(track_name, ) %>% 
-  arrange(tempo) %>% 
+  select(track_name,energy,album_name) %>%
+  #group_by(album_name) %>% 
+  arrange(desc(energy))%>% 
   head(10)
+view(energy_tws)
+
+#chart for number 1 
+high_lively%>%
+  ggplot() +
+  geom_bar(aes(x=reorder(track_name, tempo), weight=tempo)) +
+  coord_flip() + 
+  theme_minimal() + 
+  labs(
+    title="top 10 highest tempo Taylor Swift tracks",
+    x = "track name",
+    y = "Tempo",
+    caption = "High Temp T swift tracks")
+
+
+ggplot(high_lively, aes(year,count,fill=track_name)) + 
+  geom_col(position = "dodge")
 
 
 
 ``` 
 
 **Task** Write code to answer the questions.  Write up a sentence with each of your findings. Produce at least one visualization to support one of your findings. 
+#Q1:
+Taylor Swifts song "Hey Stephen" which belonged in the fearless album, had the lowest tempo. 
+
+#Q2
+
+
+#Q3
+Taylor Swifts most enefetic song is The New Romantics which scored a 0.950 on the energy scale. 
+
+#Q4
+The graph displayed above shows the top 10 highest tempo Taylor Swift tracks. 
 
 
