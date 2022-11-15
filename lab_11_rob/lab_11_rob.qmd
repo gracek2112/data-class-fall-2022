@@ -166,8 +166,8 @@ md <- get_acs(geography = "county",
 **Task** Pick one API to work with. 
 
 **Task** Develop two different *interesting* questions that you can answer with the data. Run them by your professor before getting started on answering, to ensure they're sufficiently interesting and possible with the data. 
-# 1: what are the lowest 10 songs of Taylors in regards to tempo 
-# 2: what is the avergae danciblity for each of taylors albums 
+# 1: what are the  10 songs of Taylors in regards to tempo 
+# 2: what is the avergae danciblity for each of taylors tracks  
 #3: WHat are the  top 10 enegtic songs by taylor swift 
 ```{r}
 #Q1
@@ -216,11 +216,10 @@ ggplot(high_lively, aes(year,count,fill=track_name)) +
 
 **Task** Write code to answer the questions.  Write up a sentence with each of your findings. Produce at least one visualization to support one of your findings. 
 #Q1:
-Taylor Swifts song "Hey Stephen" which belonged in the fearless album, had the lowest tempo. 
+Taylor Swifts song "State of Grace" which belonged in the fearless album, had the highesttempo. 
 
 #Q2
-
-
+The averge dancablity for many of Taylor swift songs range between 0.469-0.737. 
 #Q3
 Taylor Swifts most energetic song is The New Romantics which scored a 0.950 on the energy scale. 
 
