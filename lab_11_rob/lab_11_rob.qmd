@@ -36,14 +36,14 @@ library(janitor)
 # Spotify API package
 ###
 
-install.packages('spotifyr')
+#install.packages('spotifyr')
 library(spotifyr)
 
 ###
-library(tidycensus)
+#library(tidycensus)
 ###
 
-library(tidycensus)
+#library(tidycensus)
 
 ```
 
@@ -173,15 +173,16 @@ md <- get_acs(geography = "county",
 #Q1
 high_lively <- taylor_swift_discography %>% 
   select(track_name,tempo) %>% 
-  arrange(tempo) %>% 
+  arrange(desc(tempo)) %>% 
   head(10)
+  #slice_max(tempo,n=10) %>% 
 view(high_lively)
 
 
 #q2
 avg_tsw_danc <- taylor_swift_discography%>% 
 select(danceability,track_name,album_name) %>% 
-group_by(album_name)%>% 
+group_by(track_name)%>% 
 summarise(mean(danceability)) %>% 
 view(avg_tsw_danc)
 
@@ -195,8 +196,8 @@ view(energy_tws)
 
 #chart for number 1 
 high_lively%>%
-  ggplot() +
-  geom_bar(aes(x=reorder(track_name, tempo), weight=tempo)) +
+  ggplot(aes(x=reorder(track_name,-tempo), y=tempo, fill=tempo))+
+  geom_bar(stat= 'identity')+
   coord_flip() + 
   theme_minimal() + 
   labs(
@@ -221,7 +222,7 @@ Taylor Swifts song "Hey Stephen" which belonged in the fearless album, had the l
 
 
 #Q3
-Taylor Swifts most enefetic song is The New Romantics which scored a 0.950 on the energy scale. 
+Taylor Swifts most energetic song is The New Romantics which scored a 0.950 on the energy scale. 
 
 #Q4
 The graph displayed above shows the top 10 highest tempo Taylor Swift tracks. 
