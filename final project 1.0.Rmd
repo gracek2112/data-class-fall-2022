@@ -24,7 +24,7 @@ The preview shows you a rendered HTML copy of the contents of the editor. Conseq
 library(tidyverse)
 library(janitor)
 
-<- rio::import("")
+education_info <- rio::import("edustats.data472.cvs")
 
 
 ``` 

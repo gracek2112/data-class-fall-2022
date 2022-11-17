@@ -177,3 +177,10 @@ Think of two questions we could ask if we combined one or more variables from th
 
 Post the question on ELMS.
 
+#1
+What candidate got the the highest minority vote 
+
+#2
+What candidate got the the most votes from wealthy constituents based on household income
+
+
