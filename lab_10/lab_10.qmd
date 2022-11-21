@@ -89,7 +89,7 @@ shot_schools <- buffered_schools %>%
 
 ``` 
 **A1** 
-Ketcham ES
+Ketcham ES. There were 8 shootings 
 
 **Q2** How many distinct shooting events were there within 200 meters of any DC school in 2019, during school hours?
 
@@ -100,7 +100,7 @@ open_school_days <- dc_school_days %>%
 
 time_shooting <- location_gunshots %>% 
   clean_names() %>% 
-  filter(year =="2019" & hour > 6 & hour < 16 & type != "gunshot_or_Firecracker")
+  filter(year =="2019" & hour > 7 & hour < 15 & type != "gunshot_or_Firecracker")
 
 shootings <- time_shooting %>% 
   clean_names() %>% 
@@ -112,7 +112,7 @@ buffered_schools <- location_dc_schools %>%
 
 shot_schools <- buffered_schools %>% 
   clean_names() %>% 
-  st_join(shootings, left="FALSE") %>% 
+  st_join(shootings, left="FALSE")
   
 shot_schools %>% 
   group_by(school_name) %>% 
@@ -131,7 +131,7 @@ open_school_days <- dc_school_days %>%
 
 time_shooting <- location_gunshots %>% 
   clean_names() %>% 
-  filter(year =="2019" & hour > 6 & hour < 16 & type != "gunshot_or_Firecracker")
+  filter(year =="2019" & hour > 7 & hour < 15 & type != "Firecracker")
 
 shootings <- time_shooting %>% 
   clean_names() %>% 
@@ -168,7 +168,8 @@ buffered_schools <- location_dc_schools %>%
 center_near <- buffered_schools %>% 
 clean_names() %>% 
 st_join(shootings,left="FALSE") %>% 
-Filter(grepl("Ketcham ES,"school_name")
+  filter(school_name=="Ketcham ES")
+
 
 
 

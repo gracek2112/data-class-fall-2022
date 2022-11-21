@@ -16,18 +16,24 @@ Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by press
 When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file). 
 
 The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
-
-
-
 ```{r}
 
 library(tidyverse)
 library(janitor)
 
-education_info <- read_csv("final project/edustats.data472.csv")
-clean_names(education_info)
+bmore_absent_info  <- read_csv("hs_absent_bmore.csv")
+clean_names(bmore_absent_info)
 
-edu_police <- read_csv("final project/security _stats_edu.csv")
+```
 
-``` 
 
+
+```{r}
+most_absents_2019 <-bmore_absent_info %>% 
+  select(CSA2010, abshs19) %>% 
+  #group_by(album_name) %>% 
+  arrange(desc(abshs19))%>% 
+  head(10)
+
+
+```
