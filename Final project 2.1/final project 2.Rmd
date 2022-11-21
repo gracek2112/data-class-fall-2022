@@ -31,7 +31,6 @@ clean_names(bmore_absent_info)
 ```{r}
 most_absents_2019 <-bmore_absent_info %>% 
   select(CSA2010, abshs19) %>% 
-  #group_by(album_name) %>% 
   arrange(desc(abshs19))%>% 
   head(10)
 
