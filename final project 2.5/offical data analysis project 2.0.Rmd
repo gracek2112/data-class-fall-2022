@@ -1,0 +1,188 @@
+---
+title: "Data Anaylsis Project"
+output: html_document
+date: "2022-11-21"
+---
+
+
+# Ben Reitman and Grace Kpetemey
+
+# Our project is based around analyzing data regarding students and school discipline when students get expelled or suspended. Our data set comes from the National Center for Education Statistics and breaks down discipline categories by race, gender, race AND gender, and also has a separate category for tracking discipline for students with disabilities. In order to get the data set to be able to used in R, I had to manually clean some of the data and give each specific variable a different name. For example, every variable with "M_" in front is for male, "F_" is female, "MD_" is for male students with disabilities and "FD" is for female students with disabilites. For this project, we are mainly focusing on all_suspensions, and all_expulsions.
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+library(janitor)
+```
+```{r}
+Education_Stats <- read_csv("Education Stats - Copy of Digest 2018 Table 233.27.csv")
+```
+
+```{r}
+Education_stats_CLEAN<-Education_Stats %>% 
+  clean_names()
+```
+
+
+
+#1: What is the rate for total suspensions and expulsions combined for all students versus students with disabilities per 1,000 students?
+
+```{r}
+Education_stats_CLEAN %>% 
+  select(disability_status_sex_and_race_ethnicity, all_suspensions, all_expulsions) %>% 
+  filter((disability_status_sex_and_race_ethnicity == "All_Students") | (disability_status_sex_and_race_ethnicity == "Disabled_students")) %>% 
+  mutate(combined = all_suspensions + all_expulsions)
+  
+
+
+
+```
+
+
+# Our table shows that "total" (the total number of suspensions) and "all_expulsions" added up gives us the combined number of suspensions and expulsions for all students, and students with disabilites.
+
+
+
+
+#2:  What is the rate of total suspensions to total expulsions? For every expulsion, how many student suspensions are there?
+```{r}
+Education_stats_CLEAN %>% 
+  select(disability_status_sex_and_race_ethnicity, all_suspensions, all_expulsions) %>% 
+  filter((disability_status_sex_and_race_ethnicity == "All_Students") | (disability_status_sex_and_race_ethnicity == "Disabled_students")) %>% 
+  mutate(Suspension_rate = all_suspensions/all_expulsions)
+
+# create ratio of suspension and expulsion rate of disabled to all students
+```
+This table gives us a result that might be a bit surprising. This shows that for all students in schools, as well as students with disabilities, they both have around the same rate of suspension to expulsion rate despite students with disabilities have a lower total number of students. For around every 24 students that get suspended, one student gets expelled for both the overall student population and the disabled student population.
+
+
+#3:  How many suspensions or expulsions do minority children face in comparison to their white counterparts?
+
+```{r}
+by_race <- Education_stats_CLEAN %>% 
+  select(disability_status_sex_and_race_ethnicity, all_suspensions, all_expulsions) %>% 
+  filter((disability_status_sex_and_race_ethnicity == "All_White") |(disability_status_sex_and_race_ethnicity == "All_Black") | (disability_status_sex_and_race_ethnicity == "All_Hispanic") | (disability_status_sex_and_race_ethnicity == "All_Asian") | (disability_status_sex_and_race_ethnicity == "All_Pacific Islander") | (disability_status_sex_and_race_ethnicity == "All_American Indian/Alaska Native") | (disability_status_sex_and_race_ethnicity == "All_Two or more races")) %>% 
+mutate(discipline_by_race = all_suspensions + all_expulsions)
+```
+This table allows us to look at school discipline by race and that despite being a minority, it is very clear that black students get discipined the most in schools with about 18,000 more cases of discipline than white students.
+
+#Graphic 3
+
+```{r}
+
+ggplot(by_race, aes(discipline_by_race, disability_status_sex_and_race_ethnicity, fill = discipline_by_race)) +
+geom_col(position = "dodge")+
+labs(
+  title = "Discipline in Schools by Race")
+
+``` 
+
+#4: What is the difference between of white males and black males who recive corproal pubishment? What is that same difference between black females and white females?
+
+```{r}
+race_cp <- Education_stats_CLEAN %>% 
+  select(disability_status_sex_and_race_ethnicity,corporal_punishment) %>% 
+   filter((disability_status_sex_and_race_ethnicity == "M_White") |(disability_status_sex_and_race_ethnicity == "M_Black") | (disability_status_sex_and_race_ethnicity == "F_White") | (disability_status_sex_and_race_ethnicity == "F_Black")) 
+
+#print(sapply(race_cp, class))
+
+race_corp=data.frame(disability_sex_race=c("M_White","M_Black","F_White","F_Black"),corporal_punishment=c(44319, 29840, 8750, 10183))
+
+
+
+
+
+``` 
+
+#Graphic 4
+```{r}
+race_corp %>% 
+  ggplot() +
+  geom_bar(aes(x=reorder(disability_sex_race, corporal_punishment), weight=corporal_punishment), fill = "blue") +
+  coord_flip() + 
+  labs(
+    title="differences of corpral punishment by race and gender ",
+    x = "",
+    y = "amount"
+  )
+
+````
+
+
+#5: What is the percetage of student expuslions with and without educational services 
+
+
+```{r}
+
+ pct<- Education_stats_CLEAN %>% 
+ select(disability_status_sex_and_race_ethnicity,expulsions_with_educational_services,expulsions_without_educational_services,all_expulsions) %>% 
+filter(disability_status_sex_and_race_ethnicity == "All_Students") %>% 
+mutate(Pct_of_all_students_with_without_explulsions = expulsions_with_educational_services/all_expulsions)  
+
+pct=data.frame(no_students=c(66133, 45082, 111215), expulsion_type=c("With Educational Services", "Without Educational Services", "All Expulsions"))
+
+pct_w_edu = (66133/111215)*100
+pct_wo_edu = (45082/111215)*100
+
+print(pct_w_edu)
+print(pct_wo_edu)
+
+
+
+
+
+
+
+
+```
+
+
+
+```{r}
+#graphic 5 
+
+pct %>% 
+  ggplot() +
+  geom_bar(aes(x=reorder(expulsion_type,no_students), weight=no_students), fill = "blue") +
+  coord_flip() + 
+  labs(
+    title="differences of corpral punishment by race and gender ",
+    x = "",
+    y = "amount"
+  )
+
+
+``` 
+
+
+
+
+```{r}
+#Most Important findings
+
+#Ben and I originally set out to find to assess how students of different races are punished or disciplined in schools. We began by using data from NCES, or the National Center of Education statistics. The data provided statistics can be found at this link(https://nces.ed.gov/programs/digest/d18/tables/dt18_233.27.asp). Before we got a chance to assess and analyze the data, we had to clean the data which was very difficult because o the missing variables. 
+
+#While there were many important and insightful observations we were able to derive from the data we gathered, some stuck out more than others. For example, the rate of suspension to expulsion exists for both disabled students and students in schools were quite similar even though there is a 1991138 difference in the students in schools and disabled students.
+
+
+#Table 3 shows us that black students get disciplined the most in schools with about 18,000 more cases of discipline than white students. This was one of the findings that stuck out to us most because it corroborated and affirmed the research and studies from organizations such as PEW research or the Brookings institutions that claim the existence of glaring disparities in the types of students who were being disciplined. While our data does not explain or show this, many studies have indicated there are greater impacts on Black students later in their lives. This is why is important because our data shows 18,000 more cases of  Black students being disciplined than their white counterparts. Hispanic students faced 55,4498 suspensions compared to 18271 expulsions. Black students faced 104, 2991 suspensions compared to 33,557 expulsions. 
+
+#Another alarming observation we noticed was the disparities in race and gender who receive corporal punishment. W 44,319  white males received corporal punishment compared to the 29,840 black Black Males. However,	10,183  Black females received corporal punishment compared to the 8,750 white females. This is a difference of 1433  which is a big deal. It is important to understand Corporal punishment uses physical force agaisnt a student to correct misbehavior. In some school districts where corporal punishment is legal, a teacher or administrator is allowed to use a  large wooden board, or paddle, to strike a child's buttocks as a form of discipline. Our findings confirm the bookings institutions claim  that "Black children are twice as likely as white children to be subject to corporal punishment" 
+
+
+
+# More information regarding corporal punishment in schools: 
+https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&cad=rja&uact=8&ved=2ahUKEwiF0qutiND7AhXqEFkFHWpiDi4QFnoECA8QAQ&url=https%3A%2F%2Fwww.brookings.edu%2Fblog%2Fbrown-center-chalkboard%2F2022%2F01%2F14%2Fcorporal-punishment-schools-and-race-an-update%2F&usg=AOvVaw2JpCsESNMHvWMaJa-uAQFn 
+
+
+##More information regarding school to prison pipeline: 
+https://www.supportiveschooldiscipline.org/school-to-prison-pipeline
+
+
+
+
+``` 

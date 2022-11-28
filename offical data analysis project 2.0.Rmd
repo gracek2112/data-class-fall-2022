@@ -1,0 +1,76 @@
+---
+title: "Data Anaylsis Project"
+output: html_document
+date: "2022-11-21"
+---
+
+
+# Ben Reitman and Grace Kpetemey
+
+# Our project is based around analyzing data regarding students and school discipline when students get expelled or suspended. Our data set comes from the National Center for Education Statistics and breaks down discipline categories by race, gender, race AND gender, and also has a separate category for tracking discipline for students with disabilities. In order to get the data set to be able to used in R, I had to manually clean some of the data and give each specific variable a different name. For example, every variable with "M_" in front is for male, "F_" is female, "MD_" is for male students with disabilities and "FD" is for female students with disabilites. For this project, we are mainly focusing on all_suspensions, and all_expulsions.
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+library(janitor)
+```
+```{r}
+Education_Stats <- read_csv("Education Stats - Copy of Digest 2018 Table 233.27.csv")
+```
+
+```{r}
+Education_stats_CLEAN<-Education_Stats %>% 
+  clean_names()
+```
+
+
+
+# What is the rate for total suspensions and expulsions combined for all students versus students with disabilities per 1,000 students?
+
+```{r}
+Education_stats_CLEAN %>% 
+  select(disability_status_sex_and_race_ethnicity, all_suspensions, all_expulsions) %>% 
+  filter((disability_status_sex_and_race_ethnicity == "All_Students") | (disability_status_sex_and_race_ethnicity == "Disabled_students")) %>% 
+  mutate(combined = all_suspensions + all_expulsions)
+  
+
+
+
+```
+
+
+# Our table shows that "total" (the total number of suspensions) and "all_expulsions" added up gives us the combined number of suspensions and expulsions for all students, and students with disabilites.
+
+
+
+
+
+# What is the rate of total suspensions to total expulsions? For every expulsion, how many student suspensions are there?
+```{r}
+Education_stats_CLEAN %>% 
+  select(disability_status_sex_and_race_ethnicity, all_suspensions, all_expulsions) %>% 
+  filter((disability_status_sex_and_race_ethnicity == "All_Students") | (disability_status_sex_and_race_ethnicity == "Disabled_students")) %>% 
+  mutate(Suspension_rate = all_suspensions/all_expulsions)
+
+# create ratio of suspension and expulsion rate of disabled to all students
+```
+This table gives us a result that might be a bit surprising. This shows that for all students in schools, as well as students with disabilities, they both have around the same rate of suspension to expulsion rate despite students with disabilities have a lower total number of students. For around every 24 students that get suspended, one xtudent gets expelled for both the overall student population and the disabled student population.
+
+
+# How many suspensions or expulsions do minority children face in comparison to their white counterparts?
+
+```{r}
+Education_stats_CLEAN %>% 
+  select(disability_status_sex_and_race_ethnicity, all_suspensions, all_expulsions) %>% 
+  filter((disability_status_sex_and_race_ethnicity == "All_White") |(disability_status_sex_and_race_ethnicity == "All_Black") | (disability_status_sex_and_race_ethnicity == "All_Hispanic") | (disability_status_sex_and_race_ethnicity == "All_Asian") | (disability_status_sex_and_race_ethnicity == "All_Pacific Islander") | (disability_status_sex_and_race_ethnicity == "All_American Indian/Alaska Native") | (disability_status_sex_and_race_ethnicity == "All_Two or more races")) %>% 
+mutate(discipline_by_race = all_suspensions + all_expulsions)
+```
+This table allows us to look at school discipline by race and that despite being a minority, it is very clear that black students get discipined the most in schools with about 18,000 more cases of discipline than white students.
+
+
+
+
