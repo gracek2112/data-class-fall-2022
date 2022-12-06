@@ -1,6 +1,6 @@
 ---
 title: "A guide to Quarto Markdown"
-author: "Sean Mussenden"
+author: "Grace Kpetemey"
 date: "`r Sys.Date()`"
 format:
   html:

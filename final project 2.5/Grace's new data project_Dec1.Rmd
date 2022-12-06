@@ -29,11 +29,50 @@ corrected_pop_2020 <- rio::import("~/Documents/GitHub/data-class-fall-2022/final
 
 ```
 
+#Before understanding the suspenions and expulsions minorities face in comparison to white students, I first had to obtain the entire population of students and innerjoin the tables beneath which would create a one table with type of student, suspensions, old and new population etc. 
+
+
+```{r}
+Education_pop <- Education_Stats_CLEAN %>% 
+filter((disability_status_sex_and_race_ethnicity == "All_Students") |(disability_status_sex_and_race_ethnicity == "All_Male") | (disability_status_sex_and_race_ethnicity == "All_Female") | (disability_status_sex_and_race_ethnicity == "All_White") | (disability_status_sex_and_race_ethnicity == "All_Black") | (disability_status_sex_and_race_ethnicity == "All_Hispanic")) 
+
+```
+
+```{r}
+population2 <- corrected_pop_2020 %>% 
+  mutate(Type = case_when(
+    str_detect(Type, "Total") ~ "All_Students",
+    str_detect(Type, "Males") ~ "All_Male",
+    str_detect(Type, "Females") ~"All_Female",
+    str_detect(Type, "White") ~ "All_White",
+    str_detect(Type, "Black") ~ "All_Black",
+    str_detect(Type, "Hispanic") ~"All_Hispanic",
+    TRUE ~ Type
+  ))
+
+``` 
+
+
+```{r}
+updated_school_pop <- population2 %>%
+    inner_join(Education_pop,by= c("Type"= "disability_status_sex_and_race_ethnicity"))
+
+```
+
+```{r}
+
+#clean the corporal punishment:
+#do this for expulsion under 0 tolerance and educational services 
+
+updated_school_pop$corporal_punishment <- gsub(",", "", updated_school_pop$corporal_punishment)
+updated_school_pop$corporal_punishment  <- as.numeric(updated_school_pop$corporal_punishment )
+
+``` 
 
 #1: What is the rate for total suspensions and expulsions combined for all students versus students with disabilities. 
 
 ```{r}
-
+#TABLE 1
 population_all_students <- updated_school_pop[1, c("New_Population")]
 
 
@@ -47,7 +86,7 @@ suspensions_expulsions<-Education_Stats_CLEAN %>%
 
 
 ```
-
+# Our table shows that "total" (the total number of suspensions) and "all_expulsions" added up gives us the combined number of total infractions and the rate os suspension/expulsion for all students versus disabled students. 
 
 ```{r}
 
@@ -62,27 +101,25 @@ labs(
 # The chart shows that the rate of suspensions and expulsions is higher for all students.
 
 
-
-# Our table shows that "total" (the total number of suspensions) and "all_expulsions" added up gives us the combined number of total infractions and the rate os suspension/expulsion for all students versus disabled students. 
-
-
-
 #2:  What is the rate of total suspensions to total expulsions? For every expulsion, how many student suspensions are there?
 
 
 ```{r}
+
+#Table 2 
 sus_to_exp <- Education_Stats_CLEAN %>% 
   select(disability_status_sex_and_race_ethnicity, all_suspensions, all_expulsions) %>% 
   filter((disability_status_sex_and_race_ethnicity == "All_Students")) %>% 
   mutate(Suspension_rate = all_suspensions/all_expulsions)
 
 ```
-
 #For every expulsion, 23 students were suspended. 
 
-# Question 3: Are male students more predisposed to having repeated offenses than female students
+#Question 3: Are male students more predisposed to having repeated offenses than female students
 
 ```{r}
+
+#TABLE 3
 
 # 1 is the row for ALL_STUDENTS
 total_more_than_one_suspension_count <- Education_Stats_CLEAN[1, c("more_than_one_suspension")]
@@ -115,13 +152,20 @@ male_vs_female_repeat <- Education_Stats_CLEAN %>%
 # when we look within the context of the larger population, we see the rate only drops from 3% to 2% when looking at
 # one time offense to repeated offense.
 
+```{r}
+#Graphic/Table 3
+
+
+```
+
 
 
 # - Question 4: Are male students more predisposed to committing zero tollerance offenses than girls? 
 
 ```{r}
 
-# 41 is the row for ALL_STUDENTS
+#TABLE 4: 
+# 1 is the row for ALL_STUDENTS
 total_all_expulsions <- Education_Stats_CLEAN[1, c("expulsions_under_zero_tolerance_policies")]
 
 total_all_expulsions <- gsub(",", "", total_all_expulsions)
@@ -143,52 +187,17 @@ zero_tolerance_male_vs_female <- Education_Stats_CLEAN %>%
 # When evaluating amongst all expulsions to the entire population, the percentage is 3%, which is
 # tells us that zero tolerance policy doesn't happen more often to males compared to females
 
-
-
-
-
-
-
-
-#3:  Before understanding the suspenions and expulsions minorities face in comparison to white students, I first had to obtain the entire population of students and innerjoin the tables beneath which would create a one table with type of student, suspensions, old and new population etc. 
-
-
-
-
 ```{r}
-Education_pop <- Education_Stats_CLEAN %>% 
-filter((disability_status_sex_and_race_ethnicity == "All_Students") |(disability_status_sex_and_race_ethnicity == "All_Male") | (disability_status_sex_and_race_ethnicity == "All_Female") | (disability_status_sex_and_race_ethnicity == "All_White") | (disability_status_sex_and_race_ethnicity == "All_Black") | (disability_status_sex_and_race_ethnicity == "All_Hispanic")) 
+#Graphic/Table 4
 
-```
-
-```{r}
-population2 <- corrected_pop_2020 %>% 
-  mutate(Type = case_when(
-    str_detect(Type, "Total") ~ "All_Students",
-    str_detect(Type, "Males") ~ "All_Male",
-    str_detect(Type, "Females") ~"All_Female",
-    str_detect(Type, "White") ~ "All_White",
-    str_detect(Type, "Black") ~ "All_Black",
-    str_detect(Type, "Hispanic") ~"All_Hispanic",
-    TRUE ~ Type
-  ))
-
-``` 
-
-
-```{r}
-updated_school_pop <- population2 %>%
-    inner_join(Education_pop,by= c("Type"= "disability_status_sex_and_race_ethnicity"))
 
 ```
 
 
-```{r}
-#clean the corporal punishment:
-#do this for expulsion under 0 tolerance and educational services 
 
-updated_school_pop$corporal_punishment <- gsub(",", "", updated_school_pop$corporal_punishment)
-updated_school_pop$corporal_punishment  <- as.numeric(updated_school_pop$corporal_punishment )
+
+```{r}
+
 
 updated_school_pop$expulsions_under_zero_tolerance_policies <- gsub(",", "", updated_school_pop$expulsions_under_zero_tolerance_policies)
 updated_school_pop$expulsions_under_zero_tolerance_policies  <- as.numeric(updated_school_pop$expulsions_under_zero_tolerance_policies )
@@ -210,7 +219,12 @@ ans <- updated_school_pop %>%
  
 ```
 
+#Garphic/table 5: 
+```{}
 
+
+
+```
 
 #6: Among the suspened and expelled students, which race has more law enforcement referals 
 # Amongst the respective expelled students, which race reciceved
@@ -259,26 +273,19 @@ race_corp <- Education_Stats_CLEAN %>%
 
 ``` 
 
-#Graphic 4
+#Graphic 4- needs to be fixed for new table 
 #WELLS COMMENT - AGAIN, THIS IS WHERE THE TOTAL POPULATION FIGURES WILL PROVIDE CONTEXT
 ```{r}
-# race_corp %>% 
-#   ggplot() +
-#   geom_bar(aes(x=reorder(disability_status_sex_and_race_ethnicity, corporal_punishment), weight=corporal_punishment), fill = "blue") +
-#   coord_flip() + 
-#   labs(
-#     title="differences of corpral punishment by race and gender ",
-#     x = "",
-#     y = "amount"
-#   )
+ race_corp %>% 
+   ggplot() +
+   geom_bar(aes(x=reorder(disability_status_sex_and_race_ethnicity, corporal_punishment), weight=corporal_punishment), fill = "blue") +
+  coord_flip() + 
+  labs(
+    title="differences of corpral punishment by race and gender ",
+    x = "",
+    y = "amount")
 
 ```
-
-#WELLS COMMENT - Please write a brief summary of what you found with this chunk
-
-#WELLS COMMENT - Please write a brief summary of what you found with this chunk and why it is significant. What does "without educational services" mean?
-
-
 
 ```{r}
 #graphic 5 
@@ -324,13 +331,4 @@ https://www.supportiveschooldiscipline.org/school-to-prison-pipeline
 Importing the population data
 https://nces.ed.gov/programs/digest/d20/tables/dt20_225.90.asp
 
-```{r}
-population <- rio::import("/Volumes/GoogleDrive/My Drive/Data Class Fall 2022/Final Project/tabn225.90.xls")
 
-```
-
-
-
-Inner join Education_Stats_CLEAN to population.
-1) Create a new table, using a filter, make a smaller version of  Education_Stats_CLEAN that matches the similar values in population.
-2) then you can join the two.

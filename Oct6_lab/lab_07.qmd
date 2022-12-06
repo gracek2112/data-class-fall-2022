@@ -78,7 +78,6 @@ ggplot(ads1, aes(year,count,fill=race_sex)) +
 
 Q3. We will now visualize the data over the years for white men, black men and white women and black women athletic directors using this data: Sports_Race_ADs.csv
 
-Remember to clean the names. Import the data with the appropriate tab and it beginning with the header row.
 
 For example:
 dataframe <- read_csv('my_spreadsheet.csv', skip =1)
