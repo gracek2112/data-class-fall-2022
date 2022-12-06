@@ -25,7 +25,7 @@ Education_Stats_CLEAN <- read_csv("Education Stats - Copy of Digest 2018 Table 2
   clean_names()
 
 
-corrected_pop_2020 <- rio::import("~/Documents/GitHub/data-class-fall-2022/final project 2.5/new corrected pop.xls")
+corrected_pop_2020 <- rio::import("new corrected pop.xls")
 
 ```
 
@@ -59,7 +59,6 @@ updated_school_pop <- population2 %>%
 
 ```
 
-
 #1: What is the rate for total suspensions and expulsions combined for all students versus students with disabilities. 
 
 ```{r}
@@ -79,18 +78,32 @@ suspensions_expulsions<-Education_Stats_CLEAN %>%
 ```
 # Our table shows that "total" (the total number of suspensions) and "all_expulsions" added up gives us the combined number of total infractions and the rate os suspension/expulsion for all students versus disabled students. 
 
+#specify this is a percentage, look to how to add a x and y axis label on a ggplot and specify this is up to 40 percent 
+# Im having trouble getting it tot he correct percentage
+
+
+
 ```{r}
 
-# in ggplot, I should wrtie under labs, the y axis title 
+
 #Graphic 1
-ggplot(suspensions_expulsions, aes(rate_of_suspension_and_expulsion, disability_status_sex_and_race_ethnicity, fill = rate_of_suspension_and_expulsion)) +
-geom_col(position = "dodge")+
-labs(
-  title = "Expulsions and Suspensions for Disabled Students comapred to All")
+
+plot(
+  ggplot(suspensions_expulsions, aes(x = rate_of_suspension_and_expulsion, y = disability_status_sex_and_race_ethnicity, fill = rate_of_suspension_and_expulsion)) +
+  geom_col(position = "dodge") +
+  labs(
+    title = "Percentage of Expulsions and Suspensions for Disabled Students Compared to All Students",
+    x = "Rate of Suspension and Expulsion",
+    y = "Disability Status, Sex, and Race/Ethnicity"
+  ) +
+  scale_x_continuous(labels = percent_format(), limits = c(0, 10))
+)
+
 
 ```
 
 # The chart shows that the rate of suspensions and expulsions is higher for all students.
+
 
 #2:  What is the rate of total suspensions to total expulsions? For every expulsion, how many student suspensions are there?
 
@@ -150,7 +163,6 @@ male_vs_female_repeat <- Education_Stats_CLEAN %>%
 ```
 
 
-
 # - Question 4: Are male students more predisposed to committing zero tollerance offenses than girls? 
 
 ```{r}
@@ -159,7 +171,7 @@ male_vs_female_repeat <- Education_Stats_CLEAN %>%
 # 1 is the row for ALL_STUDENTS
 total_all_expulsions <- Education_Stats_CLEAN[1, c("expulsions_under_zero_tolerance_policies")]
 
-total_all_expulsions <- gsub(",", "", total_all_expulsions)s
+total_all_expulsions <- gsub(",", "", total_all_expulsions)
 total_all_expulsions <- as.numeric(total_all_expulsions)
 
 Education_Stats_CLEAN$expulsions_under_zero_tolerance_policies <- gsub(",", "", Education_Stats_CLEAN$expulsions_under_zero_tolerance_policies)
@@ -186,11 +198,9 @@ zero_tolerance_male_vs_female <- Education_Stats_CLEAN %>%
 
 
 
+
 ```{r}
 
-
-updated_school_pop$corporal_punishment <- gsub(",", "", updated_school_pop$corporal_punishment)
-updated_school_pop$corporal_punishment  <- as.numeric(updated_school_pop$corporal_punishment )
 
 updated_school_pop$expulsions_under_zero_tolerance_policies <- gsub(",", "", updated_school_pop$expulsions_under_zero_tolerance_policies)
 updated_school_pop$expulsions_under_zero_tolerance_policies  <- as.numeric(updated_school_pop$expulsions_under_zero_tolerance_policies )
@@ -225,7 +235,7 @@ ans <- updated_school_pop %>%
 ```{r}
 
 ler_race <- updated_school_pop %>% 
-  select(Type,all_suspensions,all_expulsions,referral_to_law_enforce_ment_5) %>% 
+  select(Type,all_suspensions,all_expulsions,) %>% 
   filter((Type == "All_Black") | (Type == "All_Hispanic") | (Type == "All_White")) %>% 
   mutate(enforcement_to_suspention_ratio = ( referral_to_law_enforce_ment_5 / all_suspensions  ) *100) %>% 
   mutate(enforcement_to_expulsion_ratio = ( referral_to_law_enforce_ment_5 /all_expulsions  ) *100)
@@ -237,6 +247,8 @@ ler_race <- updated_school_pop %>%
 #Graphic 3
 #wells comment: sort this table according to the values in descending order
 
+#code fails
+I am not sure where to put the - 
 ```{r}
 ggplot(by_race, aes((discipline_by_race, disability_status_sex_and_race_ethnicity, fill = discipline_by_race)) +
 geom_col(position = "dodge")+
@@ -248,8 +260,14 @@ labs(
 
 
 #4: What is the difference between of white males and black males who receive corporal punishment? What is that same difference between black females and white females?
-
+ 
 ```{r}
+
+#cleaned the corporal punishment expulsion under 0 tolerance 
+
+updated_school_pop$corporal_punishment <- gsub(",", "", updated_school_pop$corporal_punishment)
+updated_school_pop$corporal_punishment  <- as.numeric(updated_school_pop$corporal_punishment )
+
 all_corp_punishment = Education_Stats_CLEAN[1, c("corporal_punishment")]
 all_corp_punishment <- gsub(",", "", all_corp_punishment)
 all_corp_punishment <- as.numeric(all_corp_punishment)
@@ -269,33 +287,12 @@ race_corp <- Education_Stats_CLEAN %>%
 #Graphic 4- needs to be fixed for new table 
 #WELLS COMMENT - AGAIN, THIS IS WHERE THE TOTAL POPULATION FIGURES WILL PROVIDE CONTEXT
 ```{r}
-
-
-#Graphic 4/Table 
- race_corp %>% 
-   ggplot() +
-   geom_bar(aes(x=reorder(disability_status_sex_and_race_ethnicity, corporal_punishment), weight=corporal_punishment), fill = "blue") +
-  coord_flip() + 
-  labs(
-    title="differences of corpral punishment by race and gender ",
-    x = "",
-    y = "amount")
+Graphic/table 4
 
 
 
-pct %>% 
-  ggplot() +
-  geom_bar(aes(x=reorder(expulsion_type,no_students), weight=no_students), fill = "blue") +
-  coord_flip() + 
-  labs(
-    title="differences of corpral punishment by race and gender ",
-    x = "",
-    y = "amount"
-  )
 
-
-``` 
-
+```
 
 
 
