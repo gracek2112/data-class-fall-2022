@@ -117,6 +117,7 @@ This table gives us a result that might be a bit surprising. This shows that for
 #3:  How many suspensions or expulsions do minority children face in comparison to their white counterparts?
 
 #WELLS COMMENT: THIS table is good but to tell the entire story you need to look at the entire universe of students. This is why I asked you to find the total population of students to make this comparison.
+#do an inner join with new table from rob and filter for 1-6
 
 ```{r}
 by_race <- Education_stats_CLEAN %>% 

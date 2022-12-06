@@ -1,0 +1,336 @@
+---
+title: "Data Anaylsis Project"
+output: html_document
+date: "2022-11-21"
+---
+
+
+#Grace Kpetemey
+
+
+
+# Our project is based around analyzing data regarding students and school discipline when students get expelled or suspended. Our data set comes from the National Center for Education Statistics and breaks down discipline categories by race, gender, race AND gender, and also has a separate category for tracking discipline for students with disabilities. In order to get the data set to be able to used in R, I had to manually clean some of the data and give each specific variable a different name. For example, every variable with "M_" in front is for male, "F_" is female, "MD_" is for male students with disabilities and "FD" is for female students with disabilites. For this project, we are mainly focusing on all_suspensions, and all_expulsions. 
+
+
+```{r}
+options(scipen = 999)
+library(tidyverse)
+library(janitor)
+```
+
+
+
+```{r}
+Education_Stats_CLEAN <- read_csv("Education Stats - Copy of Digest 2018 Table 233.27.csv") %>% 
+  clean_names()
+
+
+corrected_pop_2020 <- rio::import("~/Documents/GitHub/data-class-fall-2022/final project 2.5/new corrected pop.xls")
+
+```
+
+
+#1: What is the rate for total suspensions and expulsions combined for all students versus students with disabilities. 
+
+```{r}
+
+population_all_students <- updated_school_pop[1, c("New_Population")]
+
+
+
+suspensions_expulsions<-Education_Stats_CLEAN %>% 
+  select(disability_status_sex_and_race_ethnicity, all_suspensions, all_expulsions) %>% 
+  filter((disability_status_sex_and_race_ethnicity == "All_Students") | (disability_status_sex_and_race_ethnicity == "Disabled_students")) %>% 
+  mutate(total_pop = population_all_students) %>% 
+  mutate(total_infractions = all_suspensions + all_expulsions) %>% 
+  mutate(rate_of_suspension_and_expulsion = ( total_infractions / population_all_students) * 100)
+
+
+```
+
+
+```{r}
+
+#Graphic 1
+ggplot(suspensions_expulsions, aes(rate_of_suspension_and_expulsion, disability_status_sex_and_race_ethnicity, fill = rate_of_suspension_and_expulsion)) +
+geom_col(position = "dodge")+
+labs(
+  title = "Expulsions and Suspensions for Disabled Students comapred to All")
+
+```
+
+# The chart shows that the rate of suspensions and expulsions is higher for all students.
+
+
+
+# Our table shows that "total" (the total number of suspensions) and "all_expulsions" added up gives us the combined number of total infractions and the rate os suspension/expulsion for all students versus disabled students. 
+
+
+
+#2:  What is the rate of total suspensions to total expulsions? For every expulsion, how many student suspensions are there?
+
+
+```{r}
+sus_to_exp <- Education_Stats_CLEAN %>% 
+  select(disability_status_sex_and_race_ethnicity, all_suspensions, all_expulsions) %>% 
+  filter((disability_status_sex_and_race_ethnicity == "All_Students")) %>% 
+  mutate(Suspension_rate = all_suspensions/all_expulsions)
+
+```
+
+#For every expulsion, 23 students were suspended. 
+
+# Question 3: Are male students more predisposed to having repeated offenses than female students
+
+```{r}
+
+# 1 is the row for ALL_STUDENTS
+total_more_than_one_suspension_count <- Education_Stats_CLEAN[1, c("more_than_one_suspension")]
+total_more_than_one_suspension_count <- gsub(",", "", total_more_than_one_suspension_count)
+total_more_than_one_suspension_count <- as.numeric(total_more_than_one_suspension_count)
+
+
+
+total_once_suspension_count <- Education_Stats_CLEAN[1, c("only_one_suspension")]
+total_once_suspension_count <- gsub(",", "", total_once_suspension_count)
+total_once_suspension_count <- as.numeric(total_once_suspension_count)
+
+
+male_vs_female_repeat <- Education_Stats_CLEAN %>% 
+  select(disability_status_sex_and_race_ethnicity, all_suspensions, only_one_suspension, more_than_one_suspension) %>% 
+  filter( (disability_status_sex_and_race_ethnicity == "All_Female") | (disability_status_sex_and_race_ethnicity == "All_Male")) %>% 
+  mutate(once_to_all_suspensions = (only_one_suspension / all_suspensions) * 100) %>% 
+  mutate(repeat_to_all_suspensions = (more_than_one_suspension / all_suspensions) * 100) %>% 
+  mutate(once_to_student_body = (total_once_suspension_count / population_all_students) *100) %>% 
+  mutate(repeat_to_student_body = (total_more_than_one_suspension_count / population_all_students) *100)
+```
+
+# When we evaluate amongst all males that were suspended, 57% of the time it only happpened once and  
+# 42% of the time it was a repeated offense. This shows us a 15% drop in repeated offenses amongst males.
+
+# When evaluating amongst all females that were suspensed, 62% of the time it only happened once and 
+# 37% of the time it was a repeated offense. This shows us a 25% drop in the repeated offenses amongst females.
+
+# This leads us to conclude that males are 1.6 times (60%) more likely to have repeat that females. Further more,
+# when we look within the context of the larger population, we see the rate only drops from 3% to 2% when looking at
+# one time offense to repeated offense.
+
+
+
+# - Question 4: Are male students more predisposed to committing zero tollerance offenses than girls? 
+
+```{r}
+
+# 41 is the row for ALL_STUDENTS
+total_all_expulsions <- Education_Stats_CLEAN[1, c("expulsions_under_zero_tolerance_policies")]
+
+total_all_expulsions <- gsub(",", "", total_all_expulsions)
+total_all_expulsions <- as.numeric(total_all_expulsions)
+
+Education_Stats_CLEAN$expulsions_under_zero_tolerance_policies <- gsub(",", "", Education_Stats_CLEAN$expulsions_under_zero_tolerance_policies)
+Education_Stats_CLEAN$expulsions_under_zero_tolerance_policies  <- as.numeric(Education_Stats_CLEAN$expulsions_under_zero_tolerance_policies )
+
+
+zero_tolerance_male_vs_female <- Education_Stats_CLEAN %>% 
+  select(disability_status_sex_and_race_ethnicity, all_expulsions, expulsions_under_zero_tolerance_policies) %>% 
+  filter( (disability_status_sex_and_race_ethnicity == "All_Female") | (disability_status_sex_and_race_ethnicity == "All_Male")) %>% 
+  mutate(zero_tolerance_to_all_expulsions = (expulsions_under_zero_tolerance_policies / all_expulsions) * 100) %>% 
+  mutate(zero_tolerance_to_student_body = (total_all_expulsions / population_all_students) *100)
+```
+
+# When evaluating amongst all MALES that were expulled, 15% of those were categorized as zero tolerance policy.
+# When evaluating amongst all FEMALES that were expulled, 12% of those were categorized as zero tolerance policy.
+# When evaluating amongst all expulsions to the entire population, the percentage is 3%, which is
+# tells us that zero tolerance policy doesn't happen more often to males compared to females
+
+
+
+
+
+
+
+
+#3:  Before understanding the suspenions and expulsions minorities face in comparison to white students, I first had to obtain the entire population of students and innerjoin the tables beneath which would create a one table with type of student, suspensions, old and new population etc. 
+
+
+
+
+```{r}
+Education_pop <- Education_Stats_CLEAN %>% 
+filter((disability_status_sex_and_race_ethnicity == "All_Students") |(disability_status_sex_and_race_ethnicity == "All_Male") | (disability_status_sex_and_race_ethnicity == "All_Female") | (disability_status_sex_and_race_ethnicity == "All_White") | (disability_status_sex_and_race_ethnicity == "All_Black") | (disability_status_sex_and_race_ethnicity == "All_Hispanic")) 
+
+```
+
+```{r}
+population2 <- corrected_pop_2020 %>% 
+  mutate(Type = case_when(
+    str_detect(Type, "Total") ~ "All_Students",
+    str_detect(Type, "Males") ~ "All_Male",
+    str_detect(Type, "Females") ~"All_Female",
+    str_detect(Type, "White") ~ "All_White",
+    str_detect(Type, "Black") ~ "All_Black",
+    str_detect(Type, "Hispanic") ~"All_Hispanic",
+    TRUE ~ Type
+  ))
+
+``` 
+
+
+```{r}
+updated_school_pop <- population2 %>%
+    inner_join(Education_pop,by= c("Type"= "disability_status_sex_and_race_ethnicity"))
+
+```
+
+
+```{r}
+#clean the corporal punishment:
+#do this for expulsion under 0 tolerance and educational services 
+
+updated_school_pop$corporal_punishment <- gsub(",", "", updated_school_pop$corporal_punishment)
+updated_school_pop$corporal_punishment  <- as.numeric(updated_school_pop$corporal_punishment )
+
+updated_school_pop$expulsions_under_zero_tolerance_policies <- gsub(",", "", updated_school_pop$expulsions_under_zero_tolerance_policies)
+updated_school_pop$expulsions_under_zero_tolerance_policies  <- as.numeric(updated_school_pop$expulsions_under_zero_tolerance_policies )
+
+updated_school_pop$expulsions_without_educational_services <- gsub(",", "", updated_school_pop$expulsions_without_educational_services)
+updated_school_pop$expulsions_without_educational_services  <- as.numeric(updated_school_pop$expulsions_without_educational_services )
+
+```
+
+# 5: How many suspensions or expulsions do minority children face in comparison to their white counterparts?
+
+```{r}
+ans <- updated_school_pop %>% 
+  select(Type, all_suspensions,all_expulsions, New_Population) %>% 
+  filter((Type == "All_Black") | (Type == "All_Hispanic") | (Type == "All_White")) %>% 
+  mutate(suspensions_rate= (all_suspensions / New_Population)*100) %>% 
+  mutate(expulsions_rate= (all_expulsions/New_Population)*100)
+         
+ 
+```
+
+
+
+#6: Among the suspened and expelled students, which race has more law enforcement referals 
+# Amongst the respective expelled students, which race reciceved
+
+```{r}
+
+ler_race <- updated_school_pop %>% 
+  select(Type,all_suspensions,all_expulsions,expul) %>% 
+  filter((Type == "All_Black") | (Type == "All_Hispanic") | (Type == "All_White")) %>% 
+  mutate(enforcement_to_suspention_ratio = ( referral_to_law_enforce_ment_5 / all_suspensions  ) *100) %>% 
+  mutate(enforcement_to_expulsion_ratio = ( referral_to_law_enforce_ment_5 /all_expulsions  ) *100)
+
+  
+
+```
+
+#Graphic 3
+#wells comment: sort this table according to the values in descending order
+
+```{r}
+ggplot(by_race, aes((discipline_by_race, disability_status_sex_and_race_ethnicity, fill = discipline_by_race)) +
+geom_col(position = "dodge")+
+labs(
+  title = "Discipline in Schools by Race")
+
+
+``` 
+
+
+#4: What is the difference between of white males and black males who receive corporal punishment? What is that same difference between black females and white females?
+
+```{r}
+all_corp_punishment = Education_Stats_CLEAN[1, c("corporal_punishment")]
+all_corp_punishment <- gsub(",", "", all_corp_punishment)
+all_corp_punishment <- as.numeric(all_corp_punishment)
+
+
+race_corp <- Education_Stats_CLEAN %>% 
+  filter((disability_status_sex_and_race_ethnicity == "M_White") |
+         (disability_status_sex_and_race_ethnicity == "M_Black") | 
+         (disability_status_sex_and_race_ethnicity == "F_White") | 
+         (disability_status_sex_and_race_ethnicity == "F_Black")) %>%
+  select(disability_status_sex_and_race_ethnicity, corporal_punishment) %>% 
+  mutate(total_punishment = (as.numeric(gsub(",", "", corporal_punishment)) / all_corp_punishment) *100) %>% 
+  mutate(punishment_to_pop = (all_corp_punishment / population_all_students) * 100 )
+
+``` 
+
+#Graphic 4
+#WELLS COMMENT - AGAIN, THIS IS WHERE THE TOTAL POPULATION FIGURES WILL PROVIDE CONTEXT
+```{r}
+# race_corp %>% 
+#   ggplot() +
+#   geom_bar(aes(x=reorder(disability_status_sex_and_race_ethnicity, corporal_punishment), weight=corporal_punishment), fill = "blue") +
+#   coord_flip() + 
+#   labs(
+#     title="differences of corpral punishment by race and gender ",
+#     x = "",
+#     y = "amount"
+#   )
+
+```
+
+#WELLS COMMENT - Please write a brief summary of what you found with this chunk
+
+#WELLS COMMENT - Please write a brief summary of what you found with this chunk and why it is significant. What does "without educational services" mean?
+
+
+
+```{r}
+#graphic 5 
+
+pct %>% 
+  ggplot() +
+  geom_bar(aes(x=reorder(expulsion_type,no_students), weight=no_students), fill = "blue") +
+  coord_flip() + 
+  labs(
+    title="differences of corpral punishment by race and gender ",
+    x = "",
+    y = "amount"
+  )
+
+
+``` 
+
+
+
+
+
+#Most Important findings
+
+# I originally set out to find to assess how students of different races are punished or disciplined in schools. We began by using data from NCES, or the National Center of Education statistics. The data provided statistics can be found at this link(https://nces.ed.gov/programs/digest/d18/tables/dt18_233.27.asp). Before we got a chance to assess and analyze the data, we had to clean the data which was very difficult because o the missing variables. 
+
+#While there were many important and insightful observations we were able to derive from the data we gathered, some stuck out more than others. For example, the rate of suspension to expulsion exists for both disabled students and students in schools were quite similar even though there is a #WELLS COMMENT: NEARLY 2 MILLION DIFFERENCE. USE COMMAS TO SEPARATE AT THOUSANDS. SEE AP STYLE FOR NUMBERS#1991138 difference in the students in schools and disabled students.
+
+
+#Table 3 shows us that black students get disciplined the most in schools with about 18,000 more cases of discipline than white students. This was one of the findings that stuck out to us most because it corroborated and affirmed the research and studies from organizations such as PEW research or the Brookings institutions that claim the existence of glaring disparities in the types of students who were being disciplined. #WELLS COMMENT - include a little material from pew or Brookings. Good context # While our data does not explain or show this, many studies #WELLS COMMENT - EXAMPLES OF OTHER STUDIES? # have indicated there are greater impacts on Black students later in their lives. This is why is important because our data shows 18,000 more cases of  Black students being disciplined than their white counterparts. Hispanic students faced 55,4498 suspensions compared to 18271 expulsions. Black students faced 104, 2991 suspensions compared to 33,557 expulsions. 
+
+#Another alarming observation we noticed was the disparities in race and gender who receive corporal punishment. #WELLS COMMENT. PLEASE REVISE THIS AND PUT IN PROPER AP STYLE.#W 44,319  white males received corporal punishment compared to the 29,840 black Black Males. However,    10,183  Black females received corporal punishment compared to the 8,750 white females. This is a difference of 1433  which is a big deal. It is important to understand #WELLS COMMENT: AP STYLE. NOT CAPITALIZED# Corporal punishment uses physical force agaisnt a student to correct misbehavior. In some school districts where corporal punishment is legal, a teacher or administrator is allowed to use a  large wooden board, or paddle, to strike a child's buttocks as a form of discipline. Our findings confirm the bookings institutions claim  that "Black children are twice as likely as white children to be subject to corporal punishment" 
+
+
+
+# More information regarding corporal punishment in schools: 
+https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&cad=rja&uact=8&ved=2ahUKEwiF0qutiND7AhXqEFkFHWpiDi4QFnoECA8QAQ&url=https%3A%2F%2Fwww.brookings.edu%2Fblog%2Fbrown-center-chalkboard%2F2022%2F01%2F14%2Fcorporal-punishment-schools-and-race-an-update%2F&usg=AOvVaw2JpCsESNMHvWMaJa-uAQFn 
+
+
+##More information regarding school to prison pipeline: 
+https://www.supportiveschooldiscipline.org/school-to-prison-pipeline
+
+
+Importing the population data
+https://nces.ed.gov/programs/digest/d20/tables/dt20_225.90.asp
+
+```{r}
+population <- rio::import("/Volumes/GoogleDrive/My Drive/Data Class Fall 2022/Final Project/tabn225.90.xls")
+
+```
+
+
+
+Inner join Education_Stats_CLEAN to population.
+1) Create a new table, using a filter, make a smaller version of  Education_Stats_CLEAN that matches the similar values in population.
+2) then you can join the two.

@@ -1,33 +1,55 @@
 ---
-title: "R Notebook"
-output: html_notebook
+title: "Data Anaylsis Project"
+output: html_document
+date: "2022-11-21"
 ---
 
-This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
-
-Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Cmd+Shift+Enter*. 
-
-```{r}
-plot(cars)
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
 ```
 
-Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
+```{r}
+library(tidyverse)
+library(janitor)
+```
+```{r}
+Education_Stats <- read_csv("final project/Education Stats - Digest 2018 Table 233.27.csv")
+```
 
-When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file). 
 
-The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+```{r}
+Education_Stats<-Education_Stats %>% 
+  clean_names() 
+```
+
 
 
 
 ```{r}
+Education_Stats %>% 
+  select(disability_status_sex_and_race_ethnicity, total, all_expulsions) %>% 
+  filter((disability_status_sex_and_race_ethnicity == "Total") | (disability_status_sex_and_race_ethnicity == "D_Total")) %>% 
+  mutate(combined = total + all_expulsions)
 
-library(tidyverse)
-library(janitor)
 
-education_info <- read_csv("final project/edustats.data472.csv")
-clean_names(education_info)
 
-edu_police <- read_csv("final project/security _stats_edu.csv")
+```
 
-``` 
+# What is the rate for total suspensions and expulsions combined for all students versus students with disabilities per 1,000 students?
+
+```{r}
+#What is the rate of total suspensions to total expulsions? For every expulsion, how many student suspensions are there? 
+
+
+
+
+
+
+#How many suspensions or  expulsions do minority children face in comparison to their white counterparts 
+
+
+
+
+
+
 
