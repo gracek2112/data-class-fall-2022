@@ -85,8 +85,11 @@ suspensions_expulsions<-Education_Stats_CLEAN %>%
 
 ```{r}
 
+library(scales)
 
 #Graphic 1
+
+suspensions_expulsions$rate_of_suspension_and_expulsion <- as.numeric(suspensions_expulsions$rate_of_suspension_and_expulsion)
 
 plot(
   ggplot(suspensions_expulsions, aes(x = rate_of_suspension_and_expulsion, y = disability_status_sex_and_race_ethnicity, fill = rate_of_suspension_and_expulsion)) +
@@ -96,7 +99,8 @@ plot(
     x = "Rate of Suspension and Expulsion",
     y = "Disability Status, Sex, and Race/Ethnicity"
   ) +
-  scale_x_continuous(labels = percent_format(), limits = c(0, 10))
+  # Modify the `scale_x_continuous()` function to show values in tenths on the x-axis
+  scale_x_continuous(labels = percent_format(), limits = c(0, 1))
 )
 
 

@@ -52,7 +52,7 @@ Here's an example of code that shouldn't produce any output, but we should be ab
 
 ```{r}
 #| echo: true
-#| eval: false
+#| eval: true
 
 print("Set this way, the code should display, but the output should not show up on render")
 
@@ -62,7 +62,7 @@ Here's an example of code that we shouldn't be able to see the gray box showing 
 
 ```{r}
 #| echo: false
-#| eval: true
+#| eval: false
 
 print("Set this way, the code shouldnot display, but the output should be visible on render")
 
@@ -72,7 +72,10 @@ print("Set this way, the code shouldnot display, but the output should be visibl
 
 **Task**
 * Change the first codeblock to echo true and eval true. Rewrite the print statement based on what you expect to happen.
+
 * Change the second codeblock to echo false and eval false. Rewrite the print statement based on what you expect to happen.
 
 **Task**: What did you expect to happen? Describe here what happened when you made these changes. 
+I expected the output would output would  not show up on render for the first task/codeb block and the output would be available or clear for second. But th eoutput did show up for the first code block and disapper on the second.  
+
 
