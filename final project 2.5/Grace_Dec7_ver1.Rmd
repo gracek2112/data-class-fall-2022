@@ -308,15 +308,6 @@ race_corp <- Education_Stats_CLEAN %>%
 
 #Most Important findings
 
-# I originally set out to find to assess how students of different races are punished or disciplined in schools. We began by using data from NCES, or the National Center of Education statistics. The data provided statistics can be found at this link(https://nces.ed.gov/programs/digest/d18/tables/dt18_233.27.asp). Before we got a chance to assess and analyze the data, we had to clean the data which was very difficult because o the missing variables. 
-
-#While there were many important and insightful observations we were able to derive from the data we gathered, some stuck out more than others. For example, the rate of suspension to expulsion exists for both disabled students and students in schools were quite similar even though there is a #WELLS COMMENT: NEARLY 2 MILLION DIFFERENCE. USE COMMAS TO SEPARATE AT THOUSANDS. SEE AP STYLE FOR NUMBERS#1991138 difference in the students in schools and disabled students.
-
-
-#Table 3 shows us that black students get disciplined the most in schools with about 18,000 more cases of discipline than white students. This was one of the findings that stuck out to us most because it corroborated and affirmed the research and studies from organizations such as PEW research or the Brookings institutions that claim the existence of glaring disparities in the types of students who were being disciplined. #WELLS COMMENT - include a little material from pew or Brookings. Good context # While our data does not explain or show this, many studies #WELLS COMMENT - EXAMPLES OF OTHER STUDIES? # have indicated there are greater impacts on Black students later in their lives. This is why is important because our data shows 18,000 more cases of  Black students being disciplined than their white counterparts. Hispanic students faced 55,4498 suspensions compared to 18271 expulsions. Black students faced 104, 2991 suspensions compared to 33,557 expulsions. 
-
-#Another alarming observation we noticed was the disparities in race and gender who receive corporal punishment. #WELLS COMMENT. PLEASE REVISE THIS AND PUT IN PROPER AP STYLE.#W 44,319  white males received corporal punishment compared to the 29,840 black Black Males. However,    10,183  Black females received corporal punishment compared to the 8,750 white females. This is a difference of 1433  which is a big deal. It is important to understand #WELLS COMMENT: AP STYLE. NOT CAPITALIZED# Corporal punishment uses physical force agaisnt a student to correct misbehavior. In some school districts where corporal punishment is legal, a teacher or administrator is allowed to use a  large wooden board, or paddle, to strike a child's buttocks as a form of discipline. Our findings confirm the bookings institutions claim  that "Black children are twice as likely as white children to be subject to corporal punishment" 
-
 
 
 # More information regarding corporal punishment in schools: 
