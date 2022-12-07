@@ -1,21 +1,29 @@
 ---
 title: "Data Anaylsis Project"
 output: html_document
-date: "2022-11-21"
+date: "2022-12-6"
 ---
 
 
 #Grace Kpetemey
 
 
+#WELLS COMMENT: Edit this to eliminate reference to "our" and plurals
 
-# Our project is based around analyzing data regarding students and school discipline when students get expelled or suspended. Our data set comes from the National Center for Education Statistics and breaks down discipline categories by race, gender, race AND gender, and also has a separate category for tracking discipline for students with disabilities. In order to get the data set to be able to used in R, I had to manually clean some of the data and give each specific variable a different name. For example, every variable with "M_" in front is for male, "F_" is female, "MD_" is for male students with disabilities and "FD" is for female students with disabilites. For this project, we are mainly focusing on all_suspensions, and all_expulsions. 
+# My project is based around analyzing data regarding students and school discipline when students get expelled or suspended. The data set comes from the National Center for Education Statistics and breaks down discipline categories by race, gender, race AND gender, and also has a separate category for tracking discipline for students with disabilities. 
+
+#Access Data: 
+#1. Link to data observing students disciplinary actions: https://nces.ed.gov/programs/digest/d21/tables/dt21_233.27.asp?current=yes 
+#2. Link to Student Population: https://nces.ed.gov/programs/digest/d13/tables/dt13_203.20.asp 
+
+#In order to get the data set to be able to used in R, I had to manually clean some of the data and give each specific variable a different name. For example, every variable with "M_" in front is for male, "F_" is female, "MD_" is for male students with disabilities and "FD" is for female students with disabilites. For this project, we are mainly focusing on all_suspensions, and all_expulsions. 
 
 
 ```{r}
 options(scipen = 999)
 library(tidyverse)
 library(janitor)
+library(dplyr)
 ```
 
 
@@ -57,6 +65,10 @@ population2 <- corrected_pop_2020 %>%
 updated_school_pop <- population2 %>%
     inner_join(Education_pop,by= c("Type"= "disability_status_sex_and_race_ethnicity"))
 
+#cleaning columns and making numeric values for these variables 
+updated_school_pop$expulsions_under_zero_tolerance_policies <- gsub(",", "", updated_school_pop$expulsions_under_zero_tolerance_policies)
+updated_school_pop$expulsions_under_zero_tolerance_policies  <- as.numeric(updated_school_pop$expulsions_under_zero_tolerance_policies )
+
 ```
 
 #1: What is the rate for total suspensions and expulsions combined for all students versus students with disabilities. 
@@ -72,26 +84,29 @@ suspensions_expulsions<-Education_Stats_CLEAN %>%
   filter((disability_status_sex_and_race_ethnicity == "All_Students") | (disability_status_sex_and_race_ethnicity == "Disabled_students")) %>% 
   mutate(total_pop = population_all_students) %>% 
   mutate(total_infractions = all_suspensions + all_expulsions) %>% 
-  mutate(rate_of_suspension_and_expulsion = ( total_infractions / population_all_students) * 100)
-
-
+  mutate(rate_of_suspension_and_expulsion = ( total_infractions / population_all_students) ) %>% 
+  mutate(rate_of_only_suspension = ( all_suspensions / population_all_students)) %>% 
+  mutate(rate_of_only_expulsion = ( all_expulsions / population_all_students))
 
 
 ```
 # Our table shows that "total" (the total number of suspensions) and "all_expulsions" added up gives us the combined number of total infractions and the rate os suspension/expulsion for all students versus disabled students. 
 
-#specify this is a percentage, look to how to add a x and y axis label on a ggplot and specify this is up to 40 percent 
-# Im having trouble getting it tot he correct percentage
+
+# When looking at the greater population, we see that students are receiving an infraction, which we consider an expellsion and suspension, at a 5.6% rate.When looking specifically at the disabled students, we see that they are receiving an an infraction at a 1.3% rate. Non-disabled students are accruing infractions more than the disabled students. 
+
+#Individuals with disabilities tend to be discriminated against which can have long-term impacts, especially in the school environment. Public schools can choose their choice of discipline for  any student However,Schools must help students when misconduct  is derived from a disability, like a learning or thinking difference. These stduent have extra protections which is indicative in this data above. 
+
+#The amount of of disabled students that were given an infraction relative to the total population  was 1.3 rate
+
+#disabled students relative to the total population were  given an suspension/at 1.3% rate while all students relative to the total population were given a infraction at 5.3 % rate. 
 
 
-
+#Graphic based on table 1
 ```{r}
-
-library(scales)
-
-#Graphic 1
-
-suspensions_expulsions$rate_of_suspension_and_expulsion <- as.numeric(suspensions_expulsions$rate_of_suspension_and_expulsion)
+#Graph 1
+install.packages("ggplot2")
+library(ggplot2)
 
 plot(
   ggplot(suspensions_expulsions, aes(x = rate_of_suspension_and_expulsion, y = disability_status_sex_and_race_ethnicity, fill = rate_of_suspension_and_expulsion)) +
@@ -99,16 +114,17 @@ plot(
   labs(
     title = "Percentage of Expulsions and Suspensions for Disabled Students Compared to All Students",
     x = "Rate of Suspension and Expulsion",
-    y = "Disability Status, Sex, and Race/Ethnicity"
+    y = "Disability Status, Sex, and Race/Ethnicity")
   ) +
-  # Modify the `scale_x_continuous()` function to show values in tenths on the x-axis
-  scale_x_continuous(labels = percent_format(), limits = c(0, 1))
-)
+  scale_x_continuous(labels = scales::percent_format(accuracy = 1))
+ 
 
 
 ```
 
-# The chart shows that the rate of suspensions and expulsions is higher for all students.
+#The chart shows viewers that all students are attaining infractions at almost a 6% rate. When looking specifically at disabled students, they only contribute to  less than 2% 1% rate of infractions. 
+
+
 
 
 #2:  What is the rate of total suspensions to total expulsions? For every expulsion, how many student suspensions are there?
@@ -117,10 +133,11 @@ plot(
 ```{r}
 
 #Table 2 
+
 sus_to_exp <- Education_Stats_CLEAN %>% 
   select(disability_status_sex_and_race_ethnicity, all_suspensions, all_expulsions) %>% 
   filter((disability_status_sex_and_race_ethnicity == "All_Students")) %>% 
-  mutate(Suspension_rate = all_suspensions/all_expulsions)
+  mutate(Suspension_rate = all_suspensions/all_expulsions) 
 
 ```
 #For every expulsion, 23 students were suspended. 
@@ -152,21 +169,38 @@ male_vs_female_repeat <- Education_Stats_CLEAN %>%
   mutate(repeat_to_student_body = (total_more_than_one_suspension_count / population_all_students) *100)
 ```
 
-# When we evaluate amongst all males that were suspended, 57% of the time it only happpened once and  
-# 42% of the time it was a repeated offense. This shows us a 15% drop in repeated offenses amongst males.
+# When we evaluate all males that were suspended, we see a drop of 15 percetage points between first time offenses and  repeated offenses from 57% to 42%. 
 
-# When evaluating amongst all females that were suspensed, 62% of the time it only happened once and 
-# 37% of the time it was a repeated offense. This shows us a 25% drop in the repeated offenses amongst females.
 
-# This leads us to conclude that males are 1.6 times (60%) more likely to have repeat that females. Further more,
-# when we look within the context of the larger population, we see the rate only drops from 3% to 2% when looking at
-# one time offense to repeated offense.
+# When evaluating  all females that were suspensed, we see a drop of 25 percentage points between first time and offenses and repeated offenses from 62% to 37%.
 
+
+# Since males repeated at a 42% rate and females repeated at a 37% rate. Male offenders are 1.13x more likely to repeat offenses. 
+
+
+
+#Wells Comment: No code in this chunk
 ```{r}
-#Graphic/Table 3
+#Graphic/Table 3: 
+
+library(ggplot2)
+
+#Chart 1 
+
+ggplot(male_vs_female_repeat,aes(x=disability_status_sex_and_race_ethnicity,once_to_all_suspensions, fill = once_to_all_suspensions)) +
+  geom_col(position = "dodge")
+
+
+
+#Chart 2
+
+ggplot(male_vs_female_repeat,aes(x=disability_status_sex_and_race_ethnicity,repeat_to_all_suspensions, fill = repeat_to_all_suspensions)) +
+  geom_col(position = "dodge")
+
 
 
 ```
+#Chart 1 shows among  the 77,5741 females that were suspended the 62 percent of them were first time offenders only.While chart 2 shows among all the 1860002 who were suspened , 37.6 percent were repeat offenders. 
 
 
 # - Question 4: Are male students more predisposed to committing zero tollerance offenses than girls? 
@@ -191,32 +225,29 @@ zero_tolerance_male_vs_female <- Education_Stats_CLEAN %>%
   mutate(zero_tolerance_to_student_body = (total_all_expulsions / population_all_students) *100)
 ```
 
-# When evaluating amongst all MALES that were expulled, 15% of those were categorized as zero tolerance policy.
-# When evaluating amongst all FEMALES that were expulled, 12% of those were categorized as zero tolerance policy.
-# When evaluating amongst all expulsions to the entire population, the percentage is 3%, which is
+# When evaluating amongst all MALES that were expelled, 15% of those were categorized as zero tolerance policy.
+# When evaluating amongst all FEMALES that were expelled, 12% of those were categorized as zero tolerance policy.
+# When evaluating amongst all expulsions to the entire population, the percentage change is 3%, which is
 # tells us that zero tolerance policy doesn't happen more often to males compared to females
+
+
 
 ```{r}
 #Graphic/Table 4
 
+ggplot(zero_tolerance_male_vs_female,aes(x=disability_status_sex_and_race_ethnicity,expulsions_under_zero_tolerance_policies,fill = disability_status_sex_and_race_ethnicity)) +
+  geom_col(position = "dodge")
+
 
 ```
+This chart shows 
 
-
-
-
-```{r}
-
-
-updated_school_pop$expulsions_under_zero_tolerance_policies <- gsub(",", "", updated_school_pop$expulsions_under_zero_tolerance_policies)
-updated_school_pop$expulsions_under_zero_tolerance_policies  <- as.numeric(updated_school_pop$expulsions_under_zero_tolerance_policies )
-
-updated_school_pop$expulsions_without_educational_services <- gsub(",", "", updated_school_pop$expulsions_without_educational_services)
-updated_school_pop$expulsions_without_educational_services  <- as.numeric(updated_school_pop$expulsions_without_educational_services )
-
-```
+Of the 1635 expulsions under Zero tolerance policy, the chart showcases the vast disparity between male and females holding these infractions. Males held 12,603 expullsions compared to women to held 3432 expullsions. 
+#Wells comment: what is the question this code chunk is supposed to address?
 
 # 5: How many suspensions or expulsions do minority children face in comparison to their white counterparts?
+
+#Wells comment: This is the heart of your assignment and there is a terrific finding here. Write about this discrepenancy in suspension and expulsion rate
 
 ```{r}
 ans <- updated_school_pop %>% 
@@ -228,44 +259,29 @@ ans <- updated_school_pop %>%
  
 ```
 
+#Wells comment: I strongly suggest you graph the data above. it's super important
+
 #Garphic/table 5: 
-```{}
-
-
-
-```
-
-#6: Among the suspened and expelled students, which race has more law enforcement referals 
-# Amongst the respective expelled students, which race reciceved
-
 ```{r}
+#Graph 5
+#Chart 1: Suspension rate among black, white and Hispanic students 
 
-ler_race <- updated_school_pop %>% 
-  select(Type,all_suspensions,all_expulsions,) %>% 
-  filter((Type == "All_Black") | (Type == "All_Hispanic") | (Type == "All_White")) %>% 
-  mutate(enforcement_to_suspention_ratio = ( referral_to_law_enforce_ment_5 / all_suspensions  ) *100) %>% 
-  mutate(enforcement_to_expulsion_ratio = ( referral_to_law_enforce_ment_5 /all_expulsions  ) *100)
+ggplot(ans,aes(x=Type,suspensions_rate,fill=Type)) + 
+  geom_col(position = "dodge")
 
+
+#Chart 2:Expulsion rate among black, white and Hispanic students 
+
+ggplot(ans,aes(x=Type,expulsions_rate,fill=Type)) + 
+  geom_col(position = "dodge")
   
 
+
+
 ```
 
-#Graphic 3
-#wells comment: sort this table according to the values in descending order
 
-#code fails
-I am not sure where to put the - 
-```{r}
-ggplot(by_race, aes((discipline_by_race, disability_status_sex_and_race_ethnicity, fill = discipline_by_race)) +
-geom_col(position = "dodge")+
-labs(
-  title = "Discipline in Schools by Race")
-
-
-``` 
-
-
-#4: What is the difference between of white males and black males who receive corporal punishment? What is that same difference between black females and white females?
+#6: What is the difference between of white males and black males who receive corporal punishment? What is that same difference between black females and white females?
  
 ```{r}
 
@@ -285,23 +301,10 @@ race_corp <- Education_Stats_CLEAN %>%
          (disability_status_sex_and_race_ethnicity == "F_White") | 
          (disability_status_sex_and_race_ethnicity == "F_Black")) %>%
   select(disability_status_sex_and_race_ethnicity, corporal_punishment) %>% 
-  mutate(total_punishment = (as.numeric(gsub(",", "", corporal_punishment)) / all_corp_punishment) *100) %>% 
+  mutate(corporal_punishment_to_all_corp = (as.numeric(gsub(",", "", corporal_punishment)) / all_corp_punishment) *100) %>% 
   mutate(punishment_to_pop = (all_corp_punishment / population_all_students) * 100 )
 
 ``` 
-
-#Graphic 4- needs to be fixed for new table 
-#WELLS COMMENT - AGAIN, THIS IS WHERE THE TOTAL POPULATION FIGURES WILL PROVIDE CONTEXT
-```{r}
-Graphic/table 4
-
-
-
-
-```
-
-
-
 
 #Most Important findings
 
