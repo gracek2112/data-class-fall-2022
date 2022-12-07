@@ -75,7 +75,7 @@ print("Set this way, the code shouldnot display, but the output should be visibl
 
 * Change the second codeblock to echo false and eval false. Rewrite the print statement based on what you expect to happen.
 
-**Task**: What did you expect to happen? Describe here what happened when you made these changes. 
-I expected the output would output would  not show up on render for the first task/codeb block and the output would be available or clear for second. But th eoutput did show up for the first code block and disapper on the second.  
+**Task** What did you expect to happen? Describe here what happened when you made these changes. 
+I expected the output would output would  not show up on render for the first task/code block and the output would be available or clear for second. But the output did show up for the first code block and disappear on the second.  
 
 
