@@ -1,0 +1,82 @@
+---
+title: "Hosting a GitHub Page"
+author: "Rob Wells"
+date: "`r Sys.Date()`"
+format:
+  html:
+    theme: cosmo
+---
+
+# Hosting a GitHub Page - R Cheat Sheet
+
+This exercise will allow you to create a web page for notes on R commands. You will then host it on your GitHub page.
+
+You will write your code in chunks but not execute the data. Use {r eval=FALSE, include=TRUE} in the header so the page will render without running the actual code.
+
+## Part 1: Create categories
+
+In place of these instructions, you will copy over your notes from this semester about key R commands and processes that will leave you with a usable cheat sheet. So make a copy of this now and follow the steps.
+
+First, create H1 headers for common tasks such as Data Viz, Building Tables, Cleaning Data, Joins
+
+For example
+# Data Viz
+
+Notes on building a dual axis graphic with Parker:
+
+### Scale Dollars and Percentages
+### Dual Axis Format
+
+```{r eval=FALSE, include=TRUE}
+income_vacancy %>% 
+  ggplot(aes(x = community)) +
+  geom_point(aes(y=income_2020), color = "#64D197", stroke=5) +
+  geom_point(aes(y=vacant_2020*1000), stroke=5, color = "#FB8AE3") +
+  scale_y_continuous(
+    name = "2020 Income (Green)", limits=c(0, 62000), labels=scales::dollar_format(),
+    sec.axis = sec_axis(~./60000, name="2020 Percent Vacancies (Red)", labels = scales::percent))+
+  #scale_y_continuous(labels = scales::percent) +
+  labs(
+    title = "Income and Vacancies of Baltimore Neighborhoods 2020",
+    x = "Community",
+    caption = "source: BNIA Data - By: Parker Leipzig and Rob Wells"
+  )
+```
+
+
+## Part 2: Render this document as an html page    
+ 
+    * Click Render button
+    * Load the page "Hosting_GitHub_Page.html" to your github account
+    * Access the URL from your Github account
+      
+## Part 3: Host html on GitHub    
+
+First: Set up Github to host the files.
+Setting up GH Pages
+
+      1) After uploading this html file to your repo, click on Settings on the top right.
+
+      2) Scroll down to the GitHub Pages section of Settings.
+
+      3) Change the Source from None to master branch and click save.
+
+      For future projects, you can organize your files so that all output HTML are stored        in a docs folder. Then the option master branch\docs will host those files and ignore       everything in the root folder.
+      
+
+
+      Now go to https://YOURUSERNAME.github.io/YOUR-REPO-NAME/YOUR-FILE-NAME.html and you        should have your hosted file!
+      --get rid of extraneous words such as "blob" and just use your file name, ie: Hosting_GitHub_Page.html
+      
+      https://profrobwells.github.io/Test/Hosting_GitHub_Page.html
+      
+      
+      In other words:  
+      Turn http://github.com/username/reponame/file_name.html
+      Into http://username.github.io/reponame/file_name.html
+
+    
+
+# REVEL IN YOUR NERD POWERS  
+
+

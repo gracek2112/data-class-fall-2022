@@ -69,7 +69,6 @@ population_all_students <- updated_school_pop[1, c("New_Population")]
 
 suspensions_expulsions<-Education_Stats_CLEAN %>% 
   select(disability_status_sex_and_race_ethnicity, all_suspensions, all_expulsions) %>% 
-  filter((disability_status_sex_and_race_ethnicity == "All_Students") | (disability_status_sex_and_race_ethnicity == "Disabled_students")) %>% 
   mutate(total_pop = population_all_students) %>% 
   mutate(total_infractions = all_suspensions + all_expulsions) %>% 
   mutate(rate_of_suspension_and_expulsion = ( total_infractions / population_all_students) * 100)

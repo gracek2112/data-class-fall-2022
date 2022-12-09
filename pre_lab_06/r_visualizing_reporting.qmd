@@ -274,6 +274,9 @@ Or you can plot them with side-by-side columns. Use dispo and plot the columns b
 ggplot(dispo, aes(year, n, fill = disposition)) +
   geom_col(position = "dodge")
 
+# ggplot(m_v_f, aes(disability_blah_blah, n, fill = one_)) +
+#   geom_col(position = "dodge")
+
 #2 in lab
 
 ```

@@ -8,15 +8,13 @@ date: "2022-12-6"
 #Grace Kpetemey
 
 
-#WELLS COMMENT: Edit this to eliminate reference to "our" and plurals
-
-# My project is based around analyzing data regarding students and school discipline when students get expelled or suspended. The data set comes from the National Center for Education Statistics and breaks down discipline categories by race, gender, race AND gender, and also has a separate category for tracking discipline for students with disabilities. 
+# My project is based on analyzing data regarding students and school discipline when students get expelled or suspended. The data set comes from the National Center for Education Statistics and breaks down discipline categories by race, gender, race, AND gender, and also has a separate category for tracking discipline for students with disabilities. 
 
 #Access Data: 
-#1. Link to data observing students disciplinary actions: https://nces.ed.gov/programs/digest/d21/tables/dt21_233.27.asp?current=yes 
+#1. Link to data observing students' disciplinary actions: https://nces.ed.gov/programs/digest/d21/tables/dt21_233.27.asp?current=yes 
 #2. Link to Student Population: https://nces.ed.gov/programs/digest/d13/tables/dt13_203.20.asp 
 
-#In order to get the data set to be able to used in R, I had to manually clean some of the data and give each specific variable a different name. For example, every variable with "M_" in front is for male, "F_" is female, "MD_" is for male students with disabilities and "FD" is for female students with disabilites. For this project, we are mainly focusing on all_suspensions, and all_expulsions. 
+#In order to get the data set to be able to be used in R, I had to manually clean some of the data and give each specific variable a different name. For example, every variable with "M_" in front is for males, "F_" is female, "MD_" is for male students with disabilities and "FD" is for female students with disabilities. For this project, we are mainly focusing on all_suspensions and all_expulsions. 
 
 
 ```{r}
@@ -32,18 +30,16 @@ library(dplyr)
 Education_Stats_CLEAN <- read_csv("Education Stats - Copy of Digest 2018 Table 233.27.csv") %>% 
   clean_names()
 
-
 corrected_pop_2020 <- rio::import("new corrected pop.xls")
 
 ```
 
-#Before understanding the suspenions and expulsions minorities face in comparison to white students, I first had to obtain the entire population of students and innerjoin the tables beneath which would create a one table with type of student, suspensions, old and new population etc. 
+#Before understanding the suspensions and expulsions minorities face in comparison to white students, I first had to obtain the entire population of students and innerjoin the tables beneath which would create one table with the type of student, suspensions, old and new population, etc.
 
 
 ```{r}
 Education_pop <- Education_Stats_CLEAN %>% 
 filter((disability_status_sex_and_race_ethnicity == "All_Students") |(disability_status_sex_and_race_ethnicity == "All_Male") | (disability_status_sex_and_race_ethnicity == "All_Female") | (disability_status_sex_and_race_ethnicity == "All_White") | (disability_status_sex_and_race_ethnicity == "All_Black") | (disability_status_sex_and_race_ethnicity == "All_Hispanic")) 
-
 ```
 
 ```{r}
@@ -71,13 +67,11 @@ updated_school_pop$expulsions_under_zero_tolerance_policies  <- as.numeric(updat
 
 ```
 
-#1: What is the rate for total suspensions and expulsions combined for all students versus students with disabilities. 
+#1: What is the rate for total suspensions and expulsions combined for all students versus students with disabilities? 
 
 ```{r}
 #TABLE 1
 population_all_students <- updated_school_pop[1, c("New_Population")]
-
-
 
 suspensions_expulsions<-Education_Stats_CLEAN %>% 
   select(disability_status_sex_and_race_ethnicity, all_suspensions, all_expulsions) %>% 
@@ -88,18 +82,18 @@ suspensions_expulsions<-Education_Stats_CLEAN %>%
   mutate(rate_of_only_suspension = ( all_suspensions / population_all_students)) %>% 
   mutate(rate_of_only_expulsion = ( all_expulsions / population_all_students))
 
-
 ```
-# Our table shows that "total" (the total number of suspensions) and "all_expulsions" added up gives us the combined number of total infractions and the rate os suspension/expulsion for all students versus disabled students. 
+# Our table shows that "total" (the total number of suspensions) and "all_expulsions" added up give us the combined number of total infractions and the rate of suspension/expulsion for all students versus disabled students. 
 
 
-# When looking at the greater population, we see that students are receiving an infraction, which we consider an expellsion and suspension, at a 5.6% rate.When looking specifically at the disabled students, we see that they are receiving an an infraction at a 1.3% rate. Non-disabled students are accruing infractions more than the disabled students. 
+# When looking at the greater population, we see that students are receiving an infraction, which we consider an expulsion and suspension, at a 5.6% rate. When looking specifically at disabled students, we see that they are receiving an infraction at a 1.3% rate. Non-disabled students are accruing infractions more than disabled students. 
 
-#Individuals with disabilities tend to be discriminated against which can have long-term impacts, especially in the school environment. Public schools can choose their choice of discipline for  any student However,Schools must help students when misconduct  is derived from a disability, like a learning or thinking difference. These stduent have extra protections which is indicative in this data above. 
+#Individuals with disabilities tend to be discriminated against which can have long-term impacts, especially in the school environment. Public schools can choose their choice of discipline for any student However, Schools must help students when misconduct is derived from a disability, like learning or thinking differently. These students have extra protections which are indicated in the data above. 
 
-#The amount of of disabled students that were given an infraction relative to the total population  was 1.3 rate
+#The number of disabled students that were given an infraction relative to the total population  was 1.3 rate
 
-#disabled students relative to the total population were  given an suspension/at 1.3% rate while all students relative to the total population were given a infraction at 5.3 % rate. 
+#disabled students relative to the total population were given a suspension/at a 1.3% rate while all students relative to the total population were given an infraction at a 5.3 % rate. 
+
 
 
 #Graphic based on table 1
@@ -119,20 +113,19 @@ plot(
   scale_x_continuous(labels = scales::percent_format(accuracy = 1))
  
 
-
 ```
 
-#The chart shows viewers that all students are attaining infractions at almost a 6% rate. When looking specifically at disabled students, they only contribute to  less than 2% 1% rate of infractions. 
+#The chart shows viewers that all students are attaining infractions at almost a 6% rate. When looking specifically at disabled students, they only contribute to less than a 2% 1% rate of infractions. 
 
 
-
-
-#2:  What is the rate of total suspensions to total expulsions? For every expulsion, how many student suspensions are there?
+#2: What is the rate of total suspensions to total expulsions? For every expulsion, how many student suspensions are there?
 
 
 ```{r}
 
 #Table 2 
+
+library(dplyr)
 
 sus_to_exp <- Education_Stats_CLEAN %>% 
   select(disability_status_sex_and_race_ethnicity, all_suspensions, all_expulsions) %>% 
@@ -145,7 +138,6 @@ sus_to_exp <- Education_Stats_CLEAN %>%
 #Question 3: Are male students more predisposed to having repeated offenses than female students
 
 ```{r}
-
 #TABLE 3
 
 # 1 is the row for ALL_STUDENTS
@@ -169,17 +161,17 @@ male_vs_female_repeat <- Education_Stats_CLEAN %>%
   mutate(repeat_to_student_body = (total_more_than_one_suspension_count / population_all_students) *100)
 ```
 
-# When we evaluate all males that were suspended, we see a drop of 15 percetage points between first time offenses and  repeated offenses from 57% to 42%. 
+# When we evaluate all males that were suspended, we see a drop of 15 percentage points between first-time offenses and repeated offenses from 57% to 42%. 
 
 
-# When evaluating  all females that were suspensed, we see a drop of 25 percentage points between first time and offenses and repeated offenses from 62% to 37%.
+# When evaluating all females that were suspended, we see a drop of 25 percentage points between first-time offenses and repeated offenses from 62% to 37%.
 
 
 # Since males repeated at a 42% rate and females repeated at a 37% rate. Male offenders are 1.13x more likely to repeat offenses. 
 
 
 
-#Wells Comment: No code in this chunk
+
 ```{r}
 #Graphic/Table 3: 
 
@@ -187,23 +179,32 @@ library(ggplot2)
 
 #Chart 1 
 
-ggplot(male_vs_female_repeat,aes(x=disability_status_sex_and_race_ethnicity,once_to_all_suspensions, fill = once_to_all_suspensions)) +
-  geom_col(position = "dodge")
+ggplot(male_vs_female_repeat,aes(x=disability_status_sex_and_race_ethnicity,once_to_all_suspensions/100, fill = once_to_all_suspensions)) +
+  geom_col(position = "dodge")+
+scale_y_continuous(labels = scales::percent)+
+labs(title = "First time suspended offenders",
+       caption = "Chart by Grace Kpetemey", "12-8-22",
+       y="First time offenders",
+       x="First time offenders")
 
+```
 
-
+```{r}
 #Chart 2
 
-ggplot(male_vs_female_repeat,aes(x=disability_status_sex_and_race_ethnicity,repeat_to_all_suspensions, fill = repeat_to_all_suspensions)) +
-  geom_col(position = "dodge")
-
+ggplot(male_vs_female_repeat,aes(x=disability_status_sex_and_race_ethnicity,repeat_to_all_suspensions/100, fill = repeat_to_all_suspensions)) +
+  geom_col(position = "dodge")+
+scale_y_continuous(labels = scales::percent)+
+  labs(title = "Repeat offenders by gender",
+       caption = "Chart by Grace Kpetemey","12-8-22",
+       y="Offenses",
+       x="Repeat offenders")
 
 
 ```
-#Chart 1 shows among  the 77,5741 females that were suspended the 62 percent of them were first time offenders only.While chart 2 shows among all the 1860002 who were suspened , 37.6 percent were repeat offenders. 
+#Chart 1 shows among the 77,5741 females that were suspended 62 percent of femlaes them were first-time offenders only. While chart 2 shows among all the 1860,002 students who were suspened , 37.6 percent of females were repeat offenders. 
 
-
-# - Question 4: Are male students more predisposed to committing zero tollerance offenses than girls? 
+# - Question 4: Are male students more predisposed to committing zero-tolerance offenses than girls? 
 
 ```{r}
 
@@ -227,8 +228,8 @@ zero_tolerance_male_vs_female <- Education_Stats_CLEAN %>%
 
 # When evaluating amongst all MALES that were expelled, 15% of those were categorized as zero tolerance policy.
 # When evaluating amongst all FEMALES that were expelled, 12% of those were categorized as zero tolerance policy.
-# When evaluating amongst all expulsions to the entire population, the percentage change is 3%, which is
-# tells us that zero tolerance policy doesn't happen more often to males compared to females
+# When evaluating all expulsions to the entire population, the percentage change is 3%, which is
+# tells us that the zero tolerance policy doesn't happen more often to males compared to females.
 
 
 
@@ -237,19 +238,17 @@ zero_tolerance_male_vs_female <- Education_Stats_CLEAN %>%
 
 ggplot(zero_tolerance_male_vs_female,aes(x=disability_status_sex_and_race_ethnicity,expulsions_under_zero_tolerance_policies,fill = disability_status_sex_and_race_ethnicity)) +
   geom_col(position = "dodge")
-
-
 ```
 This chart shows 
 
-Of the 1635 expulsions under Zero tolerance policy, the chart showcases the vast disparity between male and females holding these infractions. Males held 12,603 expullsions compared to women to held 3432 expullsions. 
-#Wells comment: what is the question this code chunk is supposed to address?
+Of the 1635 expulsions under Zero tolerance policy, the chart showcases the vast disparity between male and females holding these infractions. Males held 12,603 expulsions compared to women to held 3432 expulsions. 
 
 # 5: How many suspensions or expulsions do minority children face in comparison to their white counterparts?
 
-#Wells comment: This is the heart of your assignment and there is a terrific finding here. Write about this discrepenancy in suspension and expulsion rate
 
 ```{r}
+
+#Table 5
 ans <- updated_school_pop %>% 
   select(Type, all_suspensions,all_expulsions, New_Population) %>% 
   filter((Type == "All_Black") | (Type == "All_Hispanic") | (Type == "All_White")) %>% 
@@ -259,29 +258,40 @@ ans <- updated_school_pop %>%
  
 ```
 
-#Wells comment: I strongly suggest you graph the data above. it's super important
+#This table displays the all the expulsions, suspenions, and the rate of each which was posisble with the new population data. 
 
-#Garphic/table 5: 
+#Garphic based table 5: 
 ```{r}
 #Graph 5
+
 #Chart 1: Suspension rate among black, white and Hispanic students 
 
-ggplot(ans,aes(x=Type,suspensions_rate,fill=Type)) + 
-  geom_col(position = "dodge")
-
-
-#Chart 2:Expulsion rate among black, white and Hispanic students 
-
-ggplot(ans,aes(x=Type,expulsions_rate,fill=Type)) + 
-  geom_col(position = "dodge")
+ggplot(ans,aes(x=Type,suspensions_rate/100,fill=Type)) + 
+  geom_col(position = "dodge")+
+  scale_y_continuous(labels = scales::percent)+
+labs(title = "Suspension Rate among races",
+       caption = "Chart by Grace Kpetemey", "12-8-22",
+       y="Suspension rates",
+       x="Races")
   
-
-
-
 ```
 
+```{r}
+#Chart 2:Expulsion rate among black, white and Hispanic students 
 
-#6: What is the difference between of white males and black males who receive corporal punishment? What is that same difference between black females and white females?
+ggplot(ans,aes(x=Type,expulsions_rate/100,fill=Type)) + 
+  geom_col(position = "dodge")+
+scale_y_continuous(labels = scales::percent)+
+  labs(title = "Expulsion Rate among races",
+       caption = "Chart by Grace Kpetemey", "12-8-22",
+       y="Expulsion rates",
+       x="Races")
+  
+
+```
+#Chart 1 displays the black students who are suspened at a far higher rate than the white students. While Chart 2 shows similar results for the expulsion rate. However, the hispanic rate remains between the white and black students. 
+
+#6: What is the difference between white males and black males who receive corporal punishment? What is the same difference between black females and white females?
  
 ```{r}
 
@@ -290,10 +300,12 @@ ggplot(ans,aes(x=Type,expulsions_rate,fill=Type)) +
 updated_school_pop$corporal_punishment <- gsub(",", "", updated_school_pop$corporal_punishment)
 updated_school_pop$corporal_punishment  <- as.numeric(updated_school_pop$corporal_punishment )
 
+
 all_corp_punishment = Education_Stats_CLEAN[1, c("corporal_punishment")]
 all_corp_punishment <- gsub(",", "", all_corp_punishment)
 all_corp_punishment <- as.numeric(all_corp_punishment)
 
+#Table 6
 
 race_corp <- Education_Stats_CLEAN %>% 
   filter((disability_status_sex_and_race_ethnicity == "M_White") |
@@ -306,8 +318,25 @@ race_corp <- Education_Stats_CLEAN %>%
 
 ``` 
 
-#Most Important findings
+#This table showcases variations of corporal punishment handouts for white and black females and males. Using the total population of all students and the demographic of students who received them, I found that more black female students received corporal punishments than white females.  
 
+#Final story memo:
+
+#After observing and assessing data provided by the National Center for Education Statistics, the disparities among white, black, and Hispanic students who faced suspensions and expulsions were troublesome.  
+
+#Hispanic students comprised 554,498 of all suspensions while Whites held 843,381 suspensions. However, Black students were responsible for 1042, 991 suspensions. To put this in context, the total population of black students in public schools through fall 2020 is 7400000, and the total population of Whites at 22,600,000. Blacks were suspended at a 14.09 rate while Whites were suspended at a 3.73 rate and Hispanics were suspended at a 4.0 rate. Blacks also have a higher expulsion rate at 0.45 compared to whites with a rate of 0.21. Hispanics continue to hold a rate between black and whites at a 0.13 expulsion rate.   
+
+#School is often where people spend the majority of their time in their early years and the experiences derived from these environments tremendously impact a child's future. Many of these experiences can come from how one is treated or disciplined which can cause disparate treatment. After sifting through data from the NCES Statistics, there are striking observations found in regard to school discipline with race and gender. After comparing the suspension rates among females and males, male offenders are 1.13x more likely to repeat suspensions. After observing corporal punishments in U.S. schools, data indicates that Black females were more likely to receive corporal punishment compared to white females. 8,750 white females received corporal punishment compared to the 10,183 black females. 
+
+
+
+#Many conclusions derived from the sifting of the data have been supported in other forms of research. According to the American psychological association,(https://www.apa.org/news/press/releases/2021/10/black-students-harsh-discipline), "Black students more likely than white students to be suspended for minor infractions, harming later academic achievement". While our data does not show the reasons for these suspensions or expulsions, however, the data supports the black-white divide phenomenon in schools according to the Institute of family studies(https://ifstudies.org/blog/the-black-white-divide-in-suspensions-what-is-the-role-of-family)
+
+
+#While the data has allowed for the production of relevant and importing findings, there are parts where it could be strengthened such as the clear descriptions for variables, and including the total population for the years that the data were gathered. However, the original data that was provided was very robust and highlighted a large set of information. After taking the time to analyze the data, it is essential to continue asking hard questions. How and what would a student do to get a suspension and expulsion? Are there similarities between the schools that have a higher percentage of suspensions among black students compared to white students? It is critical to verify the demographics of these schools and the median incomes of the surrounding areas. This will help bring the story to life.
+
+
+#Ultimately, black students are being discriminated against. Investigating the school, and interviewing the superintendents, teachers, and principals of these schools would be a fruitful and productive next step.  
 
 
 # More information regarding corporal punishment in schools: 
@@ -318,7 +347,6 @@ https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&cad=rja&uact=8&ve
 https://www.supportiveschooldiscipline.org/school-to-prison-pipeline
 
 
-Importing the population data
-https://nces.ed.gov/programs/digest/d20/tables/dt20_225.90.asp
+
 
 
